@@ -1361,5 +1361,10 @@ class AwesomeListDetailView(DetailView):
             and not repository_filters_applied(self.request.GET, include_sort=True)
             and self.request.GET.get("page", "1") in ("", "1")
         )
+        context["show_coding_agent_discovery"] = (
+            self.object.repo_full_name == "bradAGI/awesome-cli-coding-agents"
+            and not repository_filters_applied(self.request.GET, include_sort=True)
+            and self.request.GET.get("page", "1") in ("", "1")
+        )
         context["hide_side_ad_rails"] = True
         return context
