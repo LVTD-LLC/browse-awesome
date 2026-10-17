@@ -182,6 +182,21 @@ def test_selfhosted_bookmark_discovery_uses_current_list_route_and_scoped_search
 
 
 @pytest.mark.parametrize(
+    ("source", "slug", "heading"),
+    [
+        (
+            "awesome-selfhosted/awesome-selfhosted",
+            "awesome-selfhosted",
+            "Looking for a bookmark manager?",
+        ),
+        (
+            "bradAGI/awesome-cli-coding-agents",
+            "awesome-cli-coding-agents",
+            "Find the right part of your coding-agent workflow",
+        ),
+    ],
+)
+@pytest.mark.parametrize(
     "params",
     [
         {"language": "Python"},
@@ -192,25 +207,26 @@ def test_selfhosted_bookmark_discovery_uses_current_list_route_and_scoped_search
         {"page": "last"},
     ],
 )
-def test_selfhosted_bookmark_discovery_does_not_interrupt_refined_browsing(client, params):
+def test_task_discovery_does_not_interrupt_refined_browsing(client, params, source, slug, heading):
     awesome_list = AwesomeList.objects.create(
-        name="Awesome Selfhosted",
-        slug="awesome-selfhosted",
-        source_url="https://github.com/awesome-selfhosted/awesome-selfhosted",
-        repo_full_name="awesome-selfhosted/awesome-selfhosted",
+        name="Task-specific list",
+        slug=slug,
+        source_url=f"https://github.com/{source}",
+        repo_full_name=source,
     )
 
     response = client.get(awesome_list.get_absolute_url(), params)
 
     assert response.status_code == 200
-    assert "Looking for a bookmark manager?" not in response_text(response)
+    assert heading not in response_text(response)
     assert 'href="/blog/test-saved-webpages-offline/"' not in response_text(response)
 
 
-def test_bookmark_discovery_matches_list_source_not_reused_slug(client):
+@pytest.mark.parametrize("slug", ["awesome-selfhosted", "awesome-cli-coding-agents"])
+def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
     awesome_list = AwesomeList.objects.create(
         name="Another list",
-        slug="awesome-selfhosted",
+        slug=slug,
         source_url="https://github.com/example/another-list",
         repo_full_name="example/another-list",
     )
@@ -219,7 +235,51 @@ def test_bookmark_discovery_matches_list_source_not_reused_slug(client):
 
     assert response.status_code == 200
     assert "Looking for a bookmark manager?" not in response_text(response)
+    assert "Find the right part of your coding-agent workflow" not in response_text(response)
     assert 'href="/blog/test-saved-webpages-offline/"' not in response_text(response)
+
+
+def test_coding_agent_discovery_searches_current_list_not_global_catalog(client):
+    awesome_list = AwesomeList.objects.create(
+        name="Coding tools",
+        slug="coding-current-slug",
+        source_url="https://github.com/bradAGI/awesome-cli-coding-agents",
+        repo_full_name="bradAGI/awesome-cli-coding-agents",
+    )
+    for name, description, in_list in (
+        ("agent", "A coding agent for repo tasks", True),
+        ("terminal", "A multiplexer for several sessions", True),
+        ("harness", "An agent harness", True),
+        ("outside", "A coding agent and multiplexer harness outside this list", False),
+    ):
+        repository = Repository.objects.create(
+            full_name=f"example/{name}",
+            owner="example",
+            name=name,
+            url=f"https://github.com/example/{name}",
+            description=description,
+        )
+        if in_list:
+            AwesomeListItem.objects.create(awesome_list=awesome_list, repository=repository)
+
+    path = awesome_list.get_absolute_url()
+    response = client.get(path)
+    content = response_text(response)
+    assert response.status_code == 200
+    assert "text matches, not verified categories or recommendations" in content
+    assert 'href="/blog/search-awesome-lists-with-mcp/"' in content
+    assert 'href="/blog/how-to-shortlist-github-repositories/"' in content
+    for query, encoded, action, expected in (
+        ("coding agent", "coding+agent", "coding_agents", "example/agent"),
+        ("multiplexer", "multiplexer", "coding_multiplexers", "example/terminal"),
+        ("harness", "harness", "coding_harnesses", "example/harness"),
+    ):
+        assert f'href="{path}?q={encoded}"' in content
+        assert f'data-discovery-action="{action}"' in content
+        filtered = client.get(path, {"q": query})
+        assert filtered.status_code == 200
+        assert [repo.full_name for repo in filtered.context["page_obj"]] == [expected]
+        assert "Find the right part of your coding-agent workflow" not in response_text(filtered)
 
 
 @override_settings(SITE_URL="https://testserver")

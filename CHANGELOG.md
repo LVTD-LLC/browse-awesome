@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-17
+
+- Add scoped coding-agent, multiplexer, and harness searches to the CLI coding-agent list, with upstream-evaluation guidance, MCP discovery help, and privacy-safe task-click labels.
+
 ## 2026-10-16
 
 - Restore IndexNow after the repository rename; notify only sitemap changes across deployments, migrate cached checkpoints, and avoid full-catalog submissions when a cache is missing.

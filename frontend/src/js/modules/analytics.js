@@ -24,6 +24,11 @@
     ["selfhosted_bookmarks", "selfhosted_bookmarks"],
     ["selfhosted_checklist", "selfhosted_checklist"],
     ["selfhosted_offline_test", "selfhosted_offline_test"],
+    ["coding_agents", "coding_agents"],
+    ["coding_multiplexers", "coding_multiplexers"],
+    ["coding_harnesses", "coding_harnesses"],
+    ["coding_checklist", "coding_checklist"],
+    ["coding_mcp_guide", "coding_mcp_guide"],
   ]);
   const catalogFilters = new Set([
     "mode", "list", "language", "topic", "generated_tag", "framework", "stack",
