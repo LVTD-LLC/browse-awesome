@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-18
+
+- Add a CLI coding-agent entry to the awesome-list task chooser, using the current active list route and a privacy-safe discovery label; rebalance the cards for desktop browsing.
+
 ## 2026-10-17
 
 - Add scoped coding-agent, multiplexer, and harness searches to the CLI coding-agent list, with upstream-evaluation guidance, MCP discovery help, and privacy-safe task-click labels.

@@ -67,6 +67,7 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     "awesome-selfhosted/awesome-selfhosted": "directory_self_hosted",
     "vinta/awesome-python": "directory_python",
     "agarrharr/awesome-cli-apps": "directory_cli",
+    "bradAGI/awesome-cli-coding-agents": "directory_coding_agents",
     "public-apis/public-apis": "directory_apis",
     directory_checklist: "directory_checklist",
     selfhosted_bookmarks: "selfhosted_bookmarks",
@@ -89,7 +90,7 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     assert.equal(captured.event, "discovery_action_clicked");
     assert.deepEqual(JSON.parse(JSON.stringify(captured.properties)), { action: output });
   }
-  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 13);
+  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 14);
   assert.ok(!JSON.stringify(events).includes("secret@example.com"));
   assert.ok(!JSON.stringify(events).includes("private link label"));
 });
