@@ -19,6 +19,12 @@ LIST_STARTING_POINTS = (
         "Browse command-line apps, then check platform support and installation instructions.",
     ),
     (
+        "bradAGI/awesome-cli-coding-agents",
+        "Find CLI coding agents",
+        "Explore coding agents and harnesses, then check permissions "
+        "and platform support upstream.",
+    ),
+    (
         "public-apis/public-apis",
         "Explore API resources",
         "Browse GitHub-linked resources. The upstream list also covers APIs outside this catalog.",

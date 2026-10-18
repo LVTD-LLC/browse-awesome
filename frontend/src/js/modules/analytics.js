@@ -19,6 +19,7 @@
     ["awesome-selfhosted/awesome-selfhosted", "directory_self_hosted"],
     ["vinta/awesome-python", "directory_python"],
     ["agarrharr/awesome-cli-apps", "directory_cli"],
+    ["bradAGI/awesome-cli-coding-agents", "directory_coding_agents"],
     ["public-apis/public-apis", "directory_apis"],
     ["directory_checklist", "directory_checklist"],
     ["selfhosted_bookmarks", "selfhosted_bookmarks"],

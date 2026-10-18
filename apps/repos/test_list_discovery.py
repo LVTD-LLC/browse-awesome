@@ -39,12 +39,19 @@ def test_starting_points_use_current_slug_and_skip_unavailable_sources(django_as
 
 
 @pytest.mark.django_db
-def test_directory_starting_points_do_not_displace_search_results(client):
-    AwesomeList.objects.create(
-        name="Python tools",
-        slug="python-tools",
-        repo_full_name="vinta/awesome-python",
-        source_url="https://github.com/vinta/awesome-python",
+@pytest.mark.parametrize(
+    ("source", "slug"),
+    [
+        ("vinta/awesome-python", "python-tools"),
+        ("bradAGI/awesome-cli-coding-agents", "renamed-coding-list"),
+    ],
+)
+def test_directory_starting_points_do_not_displace_search_results(client, source, slug):
+    selected_list = AwesomeList.objects.create(
+        name="Tools for this task",
+        slug=slug,
+        repo_full_name=source,
+        source_url=f"https://github.com/{source}",
         stars=100,
     )
     for index in range(30):
@@ -56,17 +63,25 @@ def test_directory_starting_points_do_not_displace_search_results(client):
     response = client.get(reverse("repos:list"))
     assert response.status_code == 200
     assert b"Start with what you want to do" in response.content
-    assert b'href="/lists/python-tools/"' in response.content
-    assert b'data-discovery-action="vinta/awesome-python"' in response.content
+    assert f'href="/lists/{slug}/"'.encode() in response.content
+    assert f'data-discovery-action="{source}"'.encode() in response.content
+    assert client.get(selected_list.get_absolute_url()).status_code == 200
     assert b'data-discovery-action="directory_checklist"' in response.content
     assert b'href="/blog/how-to-shortlist-github-repositories/"' in response.content
     assert response.content.index(b"Search lists") < response.content.index(b"Start with what")
 
-    for params in ({"q": "Python"}, {"sort": "recent"}, {"page": "2"}):
+    for params in ({"q": "Tools"}, {"sort": "recent"}, {"page": "2"}):
         filtered = client.get(reverse("repos:list"), params)
         assert filtered.status_code == 200
         assert b"Start with what you want to do" not in filtered.content
         assert filtered.context["list_starting_points"] == []
+
+    selected_list.is_disabled = True
+    selected_list.save()
+    assert (
+        f'data-discovery-action="{source}"'.encode()
+        not in client.get(reverse("repos:list")).content
+    )
 
 
 @pytest.mark.django_db
