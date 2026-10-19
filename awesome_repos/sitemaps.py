@@ -132,7 +132,7 @@ class RepositorySitemap(ConfiguredDomainSitemap):
                 item.last_synced_at,
                 item.updated_at,
                 REPOSITORY_FILE_DISCOVERY_UPDATED_AT
-                if repository_discovery_files(item.ai_development_signals)
+                if repository_discovery_files(getattr(item, "ai_development_signals", None))
                 else None,
             )
             if value
