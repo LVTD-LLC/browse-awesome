@@ -1,6 +1,49 @@
 """Editorial starting points backed by active catalog records, not fixed URLs."""
 
+from datetime import UTC, datetime
+from urllib.parse import urlencode
+
+from django.urls import reverse
+
 from apps.repos.models import AwesomeList
+from apps.repos.services import REPOSITORY_BASENAME_FILE_FILTERS, REPOSITORY_HAS_FILE_FILTER_OPTIONS
+
+REPOSITORY_FILE_DISCOVERY_UPDATED_AT = datetime(2026, 10, 19, 22, 20, tzinfo=UTC)
+
+
+def repository_discovery_files(signals):
+    """Use the catalog's exact-path and basename matching rules."""
+    if not isinstance(signals, list):
+        return []
+    paths = {
+        str(signal.get("path") or "").lower()
+        for signal in signals or []
+        if isinstance(signal, dict) and signal.get("kind", "file") == "file"
+    }
+    return [
+        file_path
+        for file_path in REPOSITORY_HAS_FILE_FILTER_OPTIONS
+        if any(
+            path == file_path.lower()
+            or (
+                file_path.lower() in REPOSITORY_BASENAME_FILE_FILTERS
+                and path.endswith(f"/{file_path.lower()}")
+            )
+            for path in paths
+        )
+    ]
+
+
+def repository_file_starting_points(signals):
+    """Link only supported, observed file filters; never imply instruction quality."""
+    return [
+        {
+            "label": file_path,
+            "url": f"{reverse('repos:search')}?{urlencode({'has_file': file_path})}",
+        }
+        for file_path in repository_discovery_files(signals)
+    ]
+
 
 LIST_STARTING_POINTS = (
     (

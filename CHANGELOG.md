@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-19
+
+- Connect detected instruction and planning files on repository pages to the existing file-filtered catalog, with explicit detection limits and a fixed privacy-safe discovery event.
+
 ## 2026-10-18
 
 - Add a CLI coding-agent entry to the awesome-list task chooser, using the current active list route and a privacy-safe discovery label; rebalance the cards for desktop browsing.
