@@ -9,6 +9,10 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 
 from apps.blog.services import list_blog_posts
+from apps.repos.discovery import (
+    REPOSITORY_FILE_DISCOVERY_UPDATED_AT,
+    repository_discovery_files,
+)
 from apps.repos.models import AwesomeList, Repository, RepositoryNewsletterIssue
 
 # Source-controlled list-page content changes are independent of catalog refreshes.
@@ -115,6 +119,7 @@ class RepositorySitemap(ConfiguredDomainSitemap):
                 "github_pushed_at",
                 "last_synced_at",
                 "updated_at",
+                "ai_development_signals",
             )
             .order_by("id")
         )
@@ -122,7 +127,14 @@ class RepositorySitemap(ConfiguredDomainSitemap):
     def lastmod(self, item):
         return max(
             value
-            for value in (item.github_pushed_at, item.last_synced_at, item.updated_at)
+            for value in (
+                item.github_pushed_at,
+                item.last_synced_at,
+                item.updated_at,
+                REPOSITORY_FILE_DISCOVERY_UPDATED_AT
+                if repository_discovery_files(item.ai_development_signals)
+                else None,
+            )
             if value
         )
 

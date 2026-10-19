@@ -7339,6 +7339,12 @@ def test_repository_detail_page_compacts_ai_development_signals(client):
     assert b"View paths" in response.content
     assert b".agents/skills/company-creator/SKILL.md" in response.content
     assert b"AI dev signals:" not in response.content
+    assert b"Find repos with CLAUDE.md" in response.content
+    assert b"has_file=.github%2Fcopilot-instructions.md" in response.content
+    assert b'data-discovery-action="repository_file_discovery"' in response.content
+    assert (
+        b"File detection is not a quality, compatibility, or safety assessment" in response.content
+    )
 
 
 @pytest.mark.django_db
@@ -7361,6 +7367,8 @@ def test_repository_detail_page_shows_empty_ai_development_signal_state(client):
     assert summary["visible_tools"] == []
     assert summary["visible_signals"] == []
     assert b"No config files detected." in response.content
+    assert not response.context["repository_file_starting_points"]
+    assert b'data-discovery-action="repository_file_discovery"' not in response.content
 
 
 @pytest.mark.django_db

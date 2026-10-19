@@ -30,6 +30,7 @@
     ["coding_harnesses", "coding_harnesses"],
     ["coding_checklist", "coding_checklist"],
     ["coding_mcp_guide", "coding_mcp_guide"],
+    ["repository_file_discovery", "repository_file_discovery"],
   ]);
   const catalogFilters = new Set([
     "mode", "list", "language", "topic", "generated_tag", "framework", "stack",

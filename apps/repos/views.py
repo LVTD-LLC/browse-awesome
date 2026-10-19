@@ -25,7 +25,7 @@ from apps.repos.cache import (
     PUBLIC_REPOSITORY_FILTER_OPTIONS_CACHE_KEY,
     PUBLIC_REPOSITORY_FILTER_OPTIONS_CACHE_TIMEOUT_SECONDS,
 )
-from apps.repos.discovery import awesome_list_starting_points
+from apps.repos.discovery import awesome_list_starting_points, repository_file_starting_points
 from apps.repos.forms import AwesomeListRequestForm, NewsletterSubscriptionForm
 from apps.repos.models import (
     AwesomeList,
@@ -1127,6 +1127,9 @@ class RepositoryDetailView(DetailView):
             context["repository_history_chart_data"] = repository_history_chart_data(self.object)
         context["similar_repositories"] = similar_repositories_for_repository(self.object)
         context["ai_development_signal_summary"] = _ai_development_signal_summary(self.object)
+        context["repository_file_starting_points"] = repository_file_starting_points(
+            self.object.ai_development_signals
+        )
         context["newsletter_issues"] = self.object.newsletter_issues.filter(
             published_at__isnull=False,
         )[:5]
