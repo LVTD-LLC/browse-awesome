@@ -13,6 +13,8 @@ REPOSITORY_FILE_DISCOVERY_UPDATED_AT = datetime(2026, 10, 19, 22, 20, tzinfo=UTC
 
 def repository_discovery_files(signals):
     """Use the catalog's exact-path and basename matching rules."""
+    if not isinstance(signals, list):
+        return []
     paths = {
         str(signal.get("path") or "").lower()
         for signal in signals or []

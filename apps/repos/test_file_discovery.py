@@ -11,6 +11,8 @@ from awesome_repos.sitemaps import RepositorySitemap
     ("signals", "expected"),
     [
         (None, []),
+        (1, []),
+        (True, []),
         (
             [
                 None,
