@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-20
+
+- Add detected-stack starting points to unfiltered repository search, with catalog-backed availability, explicit detection limits and privacy-safe navigation labels.
+
 ## 2026-10-19
 
 - Connect detected instruction and planning files on repository pages to the existing file-filtered catalog, with explicit detection limits and a fixed privacy-safe discovery event.

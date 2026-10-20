@@ -25,7 +25,11 @@ from apps.repos.cache import (
     PUBLIC_REPOSITORY_FILTER_OPTIONS_CACHE_KEY,
     PUBLIC_REPOSITORY_FILTER_OPTIONS_CACHE_TIMEOUT_SECONDS,
 )
-from apps.repos.discovery import awesome_list_starting_points, repository_file_starting_points
+from apps.repos.discovery import (
+    awesome_list_starting_points,
+    repository_file_starting_points,
+    repository_stack_starting_points,
+)
 from apps.repos.forms import AwesomeListRequestForm, NewsletterSubscriptionForm
 from apps.repos.models import (
     AwesomeList,
@@ -863,6 +867,12 @@ class RepositorySearchView(ListView):
                 package_manager_options=filter_options["package_manager_options"],
                 filter_id_prefix="repo-filter",
             )
+        )
+        context["stack_starting_points"] = (
+            repository_stack_starting_points(filter_options["stack_options"])
+            if search_page == "1"
+            and not repository_filters_applied(self.request.GET, include_sort=True)
+            else []
         )
         context["total_repositories"] = filter_options["total_repositories"]
         context["total_lists"] = filter_options["total_lists"]
