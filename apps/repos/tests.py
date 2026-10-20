@@ -5941,11 +5941,22 @@ def test_repository_pages_hide_starred_badge_when_authenticated_user_has_no_prof
 
 @pytest.mark.django_db
 def test_repository_search_has_dedicated_page(client):
+    Repository.objects.create(
+        full_name="sample/framework-demo",
+        owner="sample",
+        name="framework-demo",
+        url="https://github.com/sample/framework-demo",
+        detected_stacks=["django"],
+    )
     response = client.get(reverse("repos:search"))
 
     assert reverse("repos:search") == "/repos/"
     assert response.status_code == 200
     assert b"Search awesome repositories" in response.content
+    assert b'aria-labelledby="stack-starting-points-heading"' in response.content
+    assert b'data-discovery-action="stack_search_django"' in response.content
+    assert b'data-discovery-action="stack_search_fastapi"' not in response.content
+    assert b'href="/repos/?stack=django"' in response.content
     assert b"Browse awesome lists" in response.content
     assert b"Request a list" in response.content
 
@@ -7618,3 +7629,18 @@ def test_repository_detail_page_renders_similar_repositories(client, settings):
     assert b"Similar repositories" in response.content
     assert b"encode/django-rest-framework" in response.content
     assert b"owner/no-vector" not in response.content
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("params", [{"q": "demo"}, {"sort": "stars"}, {"stack": "django"}])
+def test_stack_starting_points_do_not_reset_refined_search(client, params):
+    Repository.objects.create(
+        full_name="sample/demo",
+        owner="sample",
+        name="demo",
+        url="https://github.com/sample/demo",
+        detected_stacks=["django"],
+    )
+    response = client.get(reverse("repos:search"), params)
+    assert response.status_code == 200
+    assert b'aria-labelledby="stack-starting-points-heading"' not in response.content

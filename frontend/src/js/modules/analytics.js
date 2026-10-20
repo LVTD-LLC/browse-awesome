@@ -31,6 +31,9 @@
     ["coding_checklist", "coding_checklist"],
     ["coding_mcp_guide", "coding_mcp_guide"],
     ["repository_file_discovery", "repository_file_discovery"],
+    ["stack_search_django", "stack_search_django"],
+    ["stack_search_fastapi", "stack_search_fastapi"],
+    ["stack_search_nextjs", "stack_search_nextjs"],
   ]);
   const catalogFilters = new Set([
     "mode", "list", "language", "topic", "generated_tag", "framework", "stack",

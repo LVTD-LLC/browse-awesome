@@ -90,3 +90,17 @@ def awesome_list_starting_points():
         for source, title, description in LIST_STARTING_POINTS
         if source in lists_by_source
     ]
+
+
+def repository_stack_starting_points(stack_options):
+    """Offer a few supported filters only when the public catalog has matches."""
+    available = {option["name"] for option in stack_options if option["count"] > 0}
+    return [
+        {
+            "label": label,
+            "url": f"{reverse('repos:search')}?{urlencode({'stack': slug})}",
+            "action": f"stack_search_{slug}",
+        }
+        for slug, label in (("django", "Django"), ("fastapi", "FastAPI"), ("nextjs", "Next.js"))
+        if slug in available
+    ]
