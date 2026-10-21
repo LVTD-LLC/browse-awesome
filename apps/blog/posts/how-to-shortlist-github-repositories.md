@@ -8,7 +8,7 @@ description: >-
   checks to choose a small trial, not to declare a repository production-ready.
 meta_description: Find GitHub repositories through awesome lists, understand activity filters, and compare candidates with a practical evidence worksheet.
 published_at: 2026-10-10T01:20:00+03:00
-updated_at: 2026-10-10T01:20:00+03:00
+updated_at: 2026-10-22T01:25:00+03:00
 author: Browse Awesome Team
 author_type: Organization
 image: /static/brand/awesome-repos-social.png
@@ -67,6 +67,8 @@ Browse Awesome stores GitHub metadata and historical snapshots. Its display is a
 The distinction between a push and a release matters. A push can change documentation or work that is not in the version you will install. Treat “updated recently” as an invitation to read the changes, not as evidence that your installation will contain them.
 
 Growth percentages need particular care. The repository filters' star- and commit-growth percentages select the earliest baseline snapshot within the seven days preceding the latest captured snapshot, then compare stored counts. Card and detail-page growth uses a window relative to the current time instead, so do not assume every displayed percentage covers the same dates. Neither approach necessarily captures a complete seven-day history. An absent or nonpositive baseline can leave a percentage unavailable. A missing percentage is not a measured zero, and a positive commit-count change does not establish the importance of the work.
+
+For a worked star-count example and the limits of these comparisons, see [GitHub star growth: read the baseline first](/blog/github-star-growth/).
 
 These descriptions follow the [repository search implementation](https://github.com/LVTD-LLC/awesome/blob/d54bef89093fe25fa1b60c07c4954bb12d1e1625/apps/repos/services.py), checked on October 9, 2026. They describe this version of the catalog, not a promise that every upstream repository was refreshed today.
 

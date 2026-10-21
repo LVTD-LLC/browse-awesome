@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-21
+
+- Publish a source-checked GitHub star-growth explainer with worked baseline and missing-history examples, contextual discovery links, and breadcrumb schema for general blog posts.
+
 ## 2026-10-20
 
 - Add detected-stack starting points to unfiltered repository search, with catalog-backed availability, explicit detection limits and privacy-safe navigation labels.

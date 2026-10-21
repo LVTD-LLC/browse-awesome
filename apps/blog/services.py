@@ -309,6 +309,24 @@ def blog_post_schema(post: BlogPost) -> dict:
     return schema
 
 
+def blog_breadcrumb_schema(post: BlogPost) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": position, "name": name, "item": url}
+            for position, (name, url) in enumerate(
+                (
+                    ("Home", build_absolute_public_url(reverse("landing"))),
+                    ("Blog", blog_index_url()),
+                    (post.title, post.canonical_url),
+                ),
+                start=1,
+            )
+        ],
+    }
+
+
 def repository_shortlist_schema(post: BlogPost) -> dict:
     return {
         "@context": "https://schema.org",
@@ -333,18 +351,9 @@ def repository_shortlist_schema(post: BlogPost) -> dict:
                 ],
             },
             {
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                    {"@type": "ListItem", "position": position, "name": name, "item": url}
-                    for position, (name, url) in enumerate(
-                        (
-                            ("Home", build_absolute_public_url(reverse("landing"))),
-                            ("Blog", blog_index_url()),
-                            (post.title, post.canonical_url),
-                        ),
-                        start=1,
-                    )
-                ],
+                key: value
+                for key, value in blog_breadcrumb_schema(post).items()
+                if key != "@context"
             },
         ],
     }
