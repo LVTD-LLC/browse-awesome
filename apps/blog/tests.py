@@ -119,6 +119,18 @@ def test_blog_post_renders_markdown_and_frontmatter_metadata(client, blog_posts_
     assert '"datePublished": "2026-07-03T00:00:00+00:00"' in content
     assert "Django" in content
     assert "pSEO" in content
+    schemas = [
+        json.loads(value)
+        for value in re.findall(
+            r'<script type="application/ld\+json">(.*?)</script>', content, re.DOTALL
+        )
+    ]
+    breadcrumbs = next(value for value in schemas if value.get("@type") == "BreadcrumbList")
+    assert [item["item"] for item in breadcrumbs["itemListElement"]] == [
+        "https://awesome.example/",
+        "https://awesome.example/blog/",
+        "https://awesome.example/blog/best-django-repositories/",
+    ]
 
 
 def test_blog_posts_are_sorted_by_publication_date(blog_posts_dir):
@@ -367,7 +379,9 @@ def test_published_repository_shortlist_guide_renders_body_and_structured_data(c
     assert article["author"] == {"@type": "Organization", "name": "Browse Awesome Team"}
     published_at = datetime.fromisoformat("2026-10-10T01:20:00+03:00")
     assert datetime.fromisoformat(article["datePublished"]) == published_at
-    assert datetime.fromisoformat(article["dateModified"]) == published_at
+    assert datetime.fromisoformat(article["dateModified"]) == datetime.fromisoformat(
+        "2026-10-22T01:25:00+03:00"
+    )
     assert article["articleBody"]
     graph = next(value["@graph"] for value in schemas if "@graph" in value)
     how_to = next(value for value in graph if value["@type"] == "HowTo")
@@ -389,14 +403,15 @@ def test_published_repository_shortlist_guide_renders_body_and_structured_data(c
 
 
 @override_settings(SITE_URL="https://browseawesome.com")
-def test_published_repository_shortlist_guide_is_in_blog_sitemap(client):
+@pytest.mark.parametrize(
+    "slug",
+    ["how-to-shortlist-github-repositories", "search-awesome-lists-with-mcp", "github-star-growth"],
+)
+def test_published_guides_are_in_blog_sitemap(client, slug):
     response = client.get(reverse("sitemap_section", kwargs={"section": "blog_posts"}))
 
     assert response.status_code == 200
-    assert (
-        "<loc>https://browseawesome.com/blog/how-to-shortlist-github-repositories/</loc>"
-        in response_text(response)
-    )
+    assert f"<loc>https://browseawesome.com/blog/{slug}/</loc>" in response_text(response)
 
 
 @pytest.mark.parametrize("page_name", ["landing", "repos:search", "blog:post_list"])
@@ -435,20 +450,53 @@ def test_published_mcp_search_guide_renders_body_and_metadata(client):
     assert "search_awesome_list_repositories" in article["articleBody"]
 
 
-@override_settings(SITE_URL="https://browseawesome.com")
-def test_published_mcp_search_guide_is_in_blog_sitemap(client):
-    response = client.get(reverse("sitemap_section", kwargs={"section": "blog_posts"}))
-
-    assert response.status_code == 200
-    assert (
-        "<loc>https://browseawesome.com/blog/search-awesome-lists-with-mcp/</loc>"
-        in response_text(response)
-    )
-
-
 @pytest.mark.parametrize("page_name", ["landing", "blog:post_list"])
 def test_published_mcp_search_guide_has_discovery_links(client, page_name):
     response = client.get(reverse(page_name))
 
     assert response.status_code == 200
     assert 'href="/blog/search-awesome-lists-with-mcp/"' in response_text(response)
+
+
+@override_settings(SITE_URL="https://browseawesome.com")
+def test_published_star_growth_explainer_renders_metadata_without_howto(client):
+    path = reverse("blog:post_detail", kwargs={"slug": "github-star-growth"})
+    response = client.get(path)
+
+    assert response.status_code == 200
+    content = response_text(response)
+    canonical_url = "https://browseawesome.com" + path
+    assert f'<link rel="canonical" href="{canonical_url}"' in content
+    assert f'<meta property="og:url" content="{canonical_url}"' in content
+    assert '<meta name="robots" content="index, follow"' in content
+    assert "GitHub star growth: read the baseline first</h1>" in content
+    assert '<a href="/repos/' in content
+    schemas = [
+        json.loads(value)
+        for value in re.findall(
+            r'<script type="application/ld\+json">(.*?)</script>', content, re.DOTALL
+        )
+    ]
+    article = next(value for value in schemas if value.get("@type") == "BlogPosting")
+    assert article["author"] == {"@type": "Organization", "name": "Browse Awesome Team"}
+    assert article["mainEntityOfPage"]["@id"] == canonical_url
+    assert article["articleBody"]
+    schema_types = {item.get("@type") for value in schemas for item in value.get("@graph", [value])}
+    assert "HowTo" not in schema_types
+    breadcrumbs = next(value for value in schemas if value.get("@type") == "BreadcrumbList")
+    assert [item["item"] for item in breadcrumbs["itemListElement"]] == [
+        "https://browseawesome.com/",
+        "https://browseawesome.com/blog/",
+        canonical_url,
+    ]
+
+
+@pytest.mark.parametrize(
+    "source_path",
+    ["/", "/blog/", "/blog/how-to-shortlist-github-repositories/"],
+)
+def test_published_star_growth_explainer_has_discovery_links(client, source_path):
+    response = client.get(source_path)
+
+    assert response.status_code == 200
+    assert 'href="/blog/github-star-growth/"' in response_text(response)

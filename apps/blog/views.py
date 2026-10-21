@@ -7,6 +7,7 @@ from apps.blog.services import (
     BlogPostNotFound,
     BlogPostValidationError,
     archive_testing_schema,
+    blog_breadcrumb_schema,
     blog_index_schema,
     blog_index_url,
     blog_post_schema,
@@ -55,7 +56,7 @@ def post_detail(request, slug):
                 if post.slug == "search-awesome-lists-with-mcp"
                 else json_ld(archive_testing_schema(post))
                 if post.slug == "test-saved-webpages-offline"
-                else None
+                else json_ld(blog_breadcrumb_schema(post))
             ),
         },
     )
