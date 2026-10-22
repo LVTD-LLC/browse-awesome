@@ -123,6 +123,13 @@
                     <dd class="mt-1 text-2xl font-black tabular-nums text-gray-950 dark:text-white">{% if performance.has_history %}{{ performance.snapshot_count|intcomma }}{% else %}0{% endif %}</dd>
                   </div>
                 </dl>
+                <p class="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                  Compare the starting count and capture dates, not just the percentage.
+                  <a href="{% url 'blog:post_detail' slug='github-star-growth' %}"
+                     data-discovery-action="repository_growth_guide"
+                     class="touch-inline-link font-semibold text-green-700 underline underline-offset-4 dark:text-green-300">How to read GitHub star growth</a>.
+                  Missing history is not zero growth.
+                </p>
               </section>
               {% if repository.topics or repository.generated_tags or repository.stack_signals %}
                 <section class="border-t border-gray-200 px-5 py-5 dark:border-white/10 sm:px-7" aria-labelledby="repository-classification-heading">

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-22
+
+- Link repository growth summaries and catalog Momentum filters to worked star-growth examples, with privacy-safe discovery click labels.
+
 ## 2026-10-21
 
 - Publish a source-checked GitHub star-growth explainer with worked baseline and missing-history examples, contextual discovery links, and breadcrumb schema for general blog posts.

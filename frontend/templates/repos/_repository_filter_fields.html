@@ -453,6 +453,12 @@
                                    value="{% if request.GET.min_star_growth_percent %}{{ request.GET.min_star_growth_percent }}{% else %}{{ request.GET.min_liability_percent }}{% endif %}"
                                    placeholder="Minimum percent gain"
                                    class="{{ control_class }}" />
+                            <p class="mt-2 text-xs leading-5 text-gray-500 dark:text-gray-400">
+                                A smaller starting count can mean a larger percentage.
+                                <a href="{% url 'blog:post_detail' slug='github-star-growth' %}"
+                                   data-discovery-action="filter_growth_guide"
+                                   class="touch-inline-link font-semibold text-green-700 underline underline-offset-4 dark:text-green-300">Compare star-growth baselines</a> before setting a threshold.
+                            </p>
                         </div>
                     </fieldset>
                 </div>

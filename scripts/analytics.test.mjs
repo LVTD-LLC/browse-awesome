@@ -82,6 +82,8 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     stack_search_django: "stack_search_django",
     stack_search_fastapi: "stack_search_fastapi",
     stack_search_nextjs: "stack_search_nextjs",
+    repository_growth_guide: "repository_growth_guide",
+    filter_growth_guide: "filter_growth_guide",
   };
   for (const [input, output] of Object.entries(actions)) {
     const link = {
@@ -94,7 +96,7 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     assert.equal(captured.event, "discovery_action_clicked");
     assert.deepEqual(JSON.parse(JSON.stringify(captured.properties)), { action: output });
   }
-  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 18);
+  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 20);
   assert.ok(!JSON.stringify(events).includes("secret@example.com"));
   assert.ok(!JSON.stringify(events).includes("private link label"));
 });
