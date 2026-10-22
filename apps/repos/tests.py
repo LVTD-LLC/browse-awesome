@@ -6032,6 +6032,8 @@ def test_search_page_humanizes_stars_and_hides_tracked_star_growth(client):
     assert b"2 history points" in response.content
     assert b"-65 tracked" not in response.content
     assert b" tracked</div>" not in response.content
+    assert b'href="/blog/github-star-growth/"' in response.content
+    assert b'data-discovery-action="filter_growth_guide"' in response.content
 
 
 @pytest.mark.django_db
@@ -6431,6 +6433,8 @@ def test_awesome_list_detail_page_filters_repositories(client):
     assert 'name="list"' not in content
     assert 'class="md:col-span-2 lg:col-span-1 min-w-0"' in content
     assert "List: awesome-python" not in content
+    assert 'href="/blog/github-star-growth/"' in content
+    assert 'data-discovery-action="filter_growth_guide"' in content
     assert "Forks" in content
     assert "Fewest list mentions" in content
     assert "Search: django" in content
@@ -6891,6 +6895,8 @@ def test_repository_detail_page_renders_performance_history(client, django_user_
     assert b"Commits" in response.content
     assert b"Stars since tracking" in response.content
     assert b"Stored snapshots" in response.content
+    assert b'href="/blog/github-star-growth/"' in response.content
+    assert b'data-discovery-action="repository_growth_guide"' in response.content
     summary_start = response.content.index(b"data-repository-summary")
     summary_end = response.content.index(b"</header>", summary_start)
     assert b"repo-chip" not in response.content[:summary_start]
@@ -7189,6 +7195,8 @@ def test_repository_detail_page_skips_chart_data_without_history(client, monkeyp
     assert b"/static/js/modules/repository-history-charts.js" not in response.content
     assert b"repository-history-data" not in response.content
     assert b"Stars history" not in response.content
+    assert b'href="/blog/github-star-growth/"' in response.content
+    assert b"Missing history is not zero growth." in response.content
 
 
 @pytest.mark.django_db

@@ -34,6 +34,8 @@
     ["stack_search_django", "stack_search_django"],
     ["stack_search_fastapi", "stack_search_fastapi"],
     ["stack_search_nextjs", "stack_search_nextjs"],
+    ["repository_growth_guide", "repository_growth_guide"],
+    ["filter_growth_guide", "filter_growth_guide"],
   ]);
   const catalogFilters = new Set([
     "mode", "list", "language", "topic", "generated_tag", "framework", "stack",
