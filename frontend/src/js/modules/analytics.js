@@ -36,6 +36,9 @@
     ["stack_search_nextjs", "stack_search_nextjs"],
     ["repository_growth_guide", "repository_growth_guide"],
     ["filter_growth_guide", "filter_growth_guide"],
+    ["empty_keep_search", "empty_keep_search"],
+    ["empty_reset_filters", "empty_reset_filters"],
+    ["empty_browse_lists", "empty_browse_lists"],
   ]);
   const catalogFilters = new Set([
     "mode", "list", "language", "topic", "generated_tag", "framework", "stack",

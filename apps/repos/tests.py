@@ -1184,6 +1184,18 @@ def test_starred_repository_search_uses_shared_repository_filters(auth_client, p
     assert "stack=django" not in framework_chip.group(1)
     assert response.context["page_obj"].paginator.count == 1
 
+    empty = auth_client.get(reverse("repos:starred"), {"q": "django", "min_stars": "99999999"})
+    assert empty.context["page_obj"].paginator.count == 0
+    assert empty.context["search_relaxed_url"] == f"{reverse('repos:starred')}?q=django"
+    assert b"Show all imported stars" in empty.content
+    empty_section = empty.content.split(b'aria-labelledby="empty-results-heading"')[1].split(
+        b"</section>"
+    )[0]
+    assert b"data-discovery-action" not in empty_section
+    recovered = auth_client.get(empty.context["search_relaxed_url"])
+    assert list(recovered.context["repositories"]) == [matching_repo]
+    assert b"example/django-tool" not in recovered.content
+
 
 def test_repository_filter_remove_querystring_resets_page_and_coupled_params():
     params = QueryDict(
@@ -5488,6 +5500,27 @@ def test_search_page_renders(client):
     assert b"Awesome Django (2)" not in content
     assert b"Inactive List" not in content
 
+    assert b'id="empty-results-heading"' not in content
+    empty = client.get(
+        reverse("repos:search"),
+        {
+            "q": "framework",
+            "min_stars": "99999999",
+            "has_file": ["AGENTS.md", "CLAUDE.md"],
+            "page": "1",
+            "extra": "discard-me",
+        },
+    )
+    assert empty.context["page_obj"].paginator.count == 0
+    assert empty.context["search_relaxed_url"] == "/repos/?q=framework"
+    assert b'data-discovery-action="empty_keep_search"' in empty.content
+    recovered = client.get(empty.context["search_relaxed_url"])
+    assert list(recovered.context["repositories"]) == [repo]
+    query_only = client.get(reverse("repos:search"), {"q": "no-such-project-xyz"})
+    assert not query_only.context["search_relaxed_url"]
+    assert b'data-discovery-action="empty_keep_search"' not in query_only.content
+    assert b'data-discovery-action="empty_reset_filters"' in query_only.content
+
 
 @pytest.mark.django_db
 def test_authenticated_user_can_toggle_repository_like_with_htmx(auth_client, user):
@@ -6358,6 +6391,10 @@ def test_awesome_list_detail_page_skips_history_charts_without_list_metadata(cli
     assert b"/static/vendors/js/d3.min.js" not in response.content
     assert b"/static/js/modules/repository-history-charts.js" not in response.content
     assert b"awesome-list-history-data" not in response.content
+    assert b"No indexed repositories in this list yet" in response.content
+    assert b'data-discovery-action="empty_browse_lists"' in response.content
+    assert b'data-discovery-action="empty_keep_search"' not in response.content
+    assert b'data-discovery-action="empty_reset_filters"' not in response.content
 
 
 @pytest.mark.django_db
@@ -6444,6 +6481,17 @@ def test_awesome_list_detail_page_filters_repositories(client):
     assert response.context["page_obj"].paginator.count == 1
     assert response.context["repo_stats"]["active_count"] == 1
     assert response.context["repo_stats"]["archived_count"] == 1
+
+    assert b'id="empty-results-heading"' not in response.content
+    empty = client.get(
+        awesome_list.get_absolute_url(),
+        {"q": "django", "min_stars": "99999999", "list": "awesome-python"},
+    )
+    assert empty.context["page_obj"].paginator.count == 0
+    assert empty.context["search_relaxed_url"] == f"{awesome_list.get_absolute_url()}?q=django"
+    assert b"Show all repos in this list" in empty.content
+    recovered = client.get(empty.context["search_relaxed_url"])
+    assert [repo.full_name for repo in recovered.context["page_obj"]] == ["django/django"]
 
 
 @pytest.mark.django_db

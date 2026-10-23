@@ -1,0 +1,55 @@
+<section aria-labelledby="empty-results-heading"
+         class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900/70 sm:p-8">
+    <h2 id="empty-results-heading"
+        class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">
+        {% if filters_applied %}
+            No repositories match these filters
+        {% elif is_personal_starred_search %}
+            No imported stars to show yet
+        {% elif awesome_list %}
+            No indexed repositories in this list yet
+        {% else %}
+            No indexed repositories to show yet
+        {% endif %}
+    </h2>
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+        {% if filters_applied %}
+            Try a broader term or remove a requirement. A missing match here does not mean the project does not exist on GitHub.
+        {% elif is_personal_starred_search %}
+            Import your GitHub stars from settings to search them here.
+        {% elif awesome_list %}
+            This catalog shows GitHub repositories indexed from the list, not every resource in its README.
+        {% else %}
+            Browse the awesome-list directory to explore another route into the catalog.
+        {% endif %}
+    </p>
+    <div class="mt-5 flex flex-wrap gap-3">
+        {% if search_relaxed_url %}
+            <a href="{{ search_relaxed_url }}"
+               {% if not is_personal_starred_search %}data-discovery-action="empty_keep_search"{% endif %}
+               class="inline-flex min-h-11 items-center justify-center rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-800 dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400">
+                Remove filters, keep search
+            </a>
+        {% endif %}
+        {% if filters_applied %}
+            <a href="{{ search_reset_url }}"
+               {% if not is_personal_starred_search %}data-discovery-action="empty_reset_filters"{% endif %}
+               class="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800">
+                {% if is_personal_starred_search %}
+                    Show all imported stars
+                {% elif awesome_list %}
+                    Show all repos in this list
+                {% else %}
+                    Show all indexed repositories
+                {% endif %}
+            </a>
+        {% endif %}
+        {% if not is_personal_starred_search %}
+            <a href="{% url 'repos:list' %}"
+               data-discovery-action="empty_browse_lists"
+               class="inline-flex min-h-11 items-center justify-center rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800">
+                Browse awesome lists
+            </a>
+        {% endif %}
+    </div>
+</section>
