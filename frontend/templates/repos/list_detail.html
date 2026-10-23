@@ -237,13 +237,7 @@
                     {% for repo in page_obj %}
                         {% include "repos/_repository_list_card.html" %}
                     {% empty %}
-                        <div class="rounded-2xl border border-dashed border-gray-300 p-10 text-center dark:border-gray-700">
-                            {% if filters_applied %}
-                                No repos made it through those filters.
-                            {% else %}
-                                This list is still waiting for its first repo.
-                            {% endif %}
-                        </div>
+                        {% include "repos/_repository_empty_state.html" %}
                     {% endfor %}
                 </div>
                 {% if page_obj.has_other_pages %}

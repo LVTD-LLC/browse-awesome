@@ -775,6 +775,9 @@ def repository_filter_context(
         params,
         sort_labels=sort_labels,
     )
+    search_only_querystring = urlencode(
+        {key: params[key] for key in ("q", "mode") if params.get(key)}
+    )
     return {
         "params": params,
         "querystring": params.urlencode(),
@@ -796,6 +799,14 @@ def repository_filter_context(
         "show_search_mode": show_search_mode,
         "search_action_url": search_url,
         "search_reset_url": reset_url,
+        "search_relaxed_url": (
+            f"{search_url}?{search_only_querystring}"
+            if (params.get("q") or "").strip()
+            and any(
+                params.get(key) for key in REPOSITORY_FILTER_PARAM_NAMES if key not in {"q", "mode"}
+            )
+            else ""
+        ),
         "recent_repository_growth_days": RECENT_REPOSITORY_GROWTH_DAYS,
     }
 

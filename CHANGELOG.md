@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-23
+
+- Add actionable empty-result recovery for repository search and list browsing: keep the search while removing other filters, reset within the current catalog or starred scope, and measure public recovery actions without query text.
+
 ## 2026-10-22
 
 - Link repository growth summaries and catalog Momentum filters to worked star-growth examples, with privacy-safe discovery click labels.
