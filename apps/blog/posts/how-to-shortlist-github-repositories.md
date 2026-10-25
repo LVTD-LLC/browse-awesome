@@ -8,7 +8,7 @@ description: >-
   checks to choose a small trial, not to declare a repository production-ready.
 meta_description: Find GitHub repositories through awesome lists, understand activity filters, and compare candidates with a practical evidence worksheet.
 published_at: 2026-10-10T01:20:00+03:00
-updated_at: 2026-10-22T01:25:00+03:00
+updated_at: 2026-10-25T22:20:08+00:00
 author: Browse Awesome Team
 author_type: Organization
 image: /static/brand/awesome-repos-social.png
@@ -75,6 +75,8 @@ These descriptions follow the [repository search implementation](https://github.
 ## 4. Check upstream evidence
 
 Open each candidate's repository detail page, then follow its GitHub link. Start with the README and version-specific documentation. Find the exact capability you need and any stated limitations. Check that an example applies to the version you expect to install rather than an unreleased branch.
+
+For framework searches, [find GitHub projects using Django and check the dependency role](/blog/find-django-github-projects/) before treating a catalog match as an application example. A manifest in a test group or example directory tells a different story from an app's runtime requirements.
 
 Read the license file instead of inferring permission from a public page or an awesome-list mention. [GitHub's licensing documentation](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository) explains the distinction between public visibility and licensing. Record the license and any compatibility question for appropriate review; this workflow does not settle legal obligations.
 

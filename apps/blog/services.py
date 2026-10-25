@@ -359,6 +359,37 @@ def repository_shortlist_schema(post: BlogPost) -> dict:
     }
 
 
+def django_dependency_schema(post: BlogPost) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "HowTo",
+                "name": post.title,
+                "description": post.description,
+                "url": post.canonical_url,
+                "step": [
+                    {"@type": "HowToStep", "position": position, "name": name}
+                    for position, name in enumerate(
+                        (
+                            "Start with a discovery filter, not a verdict",
+                            "Open the original file and fix the revision",
+                            "Work through the factory_boy match",
+                            "Contrast a project dependency with an application decision",
+                        ),
+                        start=1,
+                    )
+                ],
+            },
+            {
+                key: value
+                for key, value in blog_breadcrumb_schema(post).items()
+                if key != "@context"
+            },
+        ],
+    }
+
+
 def mcp_discovery_schema(post: BlogPost) -> dict:
     schema = repository_shortlist_schema(post)
     schema["@graph"][0]["step"] = [
