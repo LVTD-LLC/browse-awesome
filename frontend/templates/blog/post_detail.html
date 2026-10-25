@@ -55,7 +55,12 @@
         {% if post.slug == "test-saved-webpages-offline" %}
             {% include "blog/includes/archive_test_process.html" %}
         {% endif %}
-        <div class="prose prose-gray mt-8 max-w-none dark:prose-invert">{{ post.html|safe }}</div>
+        {% if post.slug == "find-django-github-projects" %}
+            {% include "blog/includes/django_dependency_process.html" %}
+        {% endif %}
+        <div class="prose prose-gray mt-8 max-w-none dark:prose-invert{% if post.slug == 'find-django-github-projects' %} [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto{% endif %}">
+            {{ post.html|safe }}
+        </div>
         {% if post.tags %}
             <footer class="mt-10 flex flex-wrap gap-2 border-t border-gray-200 pt-6 dark:border-gray-800">
                 {% for tag in post.tags %}

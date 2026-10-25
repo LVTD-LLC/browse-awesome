@@ -14,5 +14,11 @@
                    class="inline-flex min-h-11 items-center justify-center rounded-xl border border-violet-200 bg-white px-4 py-2 text-sm font-semibold text-violet-700 transition hover:bg-violet-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700 dark:border-violet-300/20 dark:bg-gray-950 dark:text-violet-200 dark:hover:bg-violet-400/20 dark:focus-visible:outline-violet-300">{{ entry.label }} repositories</a>
             {% endfor %}
         </div>
+        <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
+            Starting with Django?
+            <a href="{% url 'blog:post_detail' slug='find-django-github-projects' %}"
+               class="font-semibold text-violet-700 underline underline-offset-4 dark:text-violet-200">Check what a Django dependency match means</a>
+            before treating it as an application example.
+        </p>
     </nav>
 {% endif %}

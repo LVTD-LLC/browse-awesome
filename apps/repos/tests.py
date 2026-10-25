@@ -5990,6 +5990,7 @@ def test_repository_search_has_dedicated_page(client):
     assert b'data-discovery-action="stack_search_django"' in response.content
     assert b'data-discovery-action="stack_search_fastapi"' not in response.content
     assert b'href="/repos/?stack=django"' in response.content
+    assert b'href="/blog/find-django-github-projects/"' in response.content
     assert b"Browse awesome lists" in response.content
     assert b"Request a list" in response.content
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-25
+
+- Publish a Django repository-discovery guide with pinned manifest examples, a dependency-role worksheet and process diagram; link it from detected-stack starting points and the shortlisting guide, with matching structured steps.
+
 ## 2026-10-23
 
 - Add actionable empty-result recovery for repository search and list browsing: keep the search while removing other filters, reset within the current catalog or starred scope, and measure public recovery actions without query text.

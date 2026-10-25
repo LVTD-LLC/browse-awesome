@@ -380,7 +380,7 @@ def test_published_repository_shortlist_guide_renders_body_and_structured_data(c
     published_at = datetime.fromisoformat("2026-10-10T01:20:00+03:00")
     assert datetime.fromisoformat(article["datePublished"]) == published_at
     assert datetime.fromisoformat(article["dateModified"]) == datetime.fromisoformat(
-        "2026-10-22T01:25:00+03:00"
+        "2026-10-25T22:20:08+00:00"
     )
     assert article["articleBody"]
     graph = next(value["@graph"] for value in schemas if "@graph" in value)
@@ -405,7 +405,12 @@ def test_published_repository_shortlist_guide_renders_body_and_structured_data(c
 @override_settings(SITE_URL="https://browseawesome.com")
 @pytest.mark.parametrize(
     "slug",
-    ["how-to-shortlist-github-repositories", "search-awesome-lists-with-mcp", "github-star-growth"],
+    [
+        "how-to-shortlist-github-repositories",
+        "search-awesome-lists-with-mcp",
+        "github-star-growth",
+        "find-django-github-projects",
+    ],
 )
 def test_published_guides_are_in_blog_sitemap(client, slug):
     response = client.get(reverse("sitemap_section", kwargs={"section": "blog_posts"}))
@@ -500,3 +505,60 @@ def test_published_star_growth_explainer_has_discovery_links(client, source_path
 
     assert response.status_code == 200
     assert 'href="/blog/github-star-growth/"' in response_text(response)
+
+
+@override_settings(SITE_URL="https://browseawesome.com")
+def test_published_django_discovery_guide_renders_evidence_and_matching_schema(client):
+    path = reverse("blog:post_detail", kwargs={"slug": "find-django-github-projects"})
+    response = client.get(path)
+
+    assert response.status_code == 200
+    content = response_text(response)
+    canonical_url = "https://browseawesome.com" + path
+    assert f'<link rel="canonical" href="{canonical_url}"' in content
+    assert '<meta name="robots" content="index, follow"' in content
+    assert "Find GitHub projects using Django—then check the dependency</h1>" in content
+    assert '<a href="/repos/?framework=django"' in content
+    assert "<table>" in content
+    assert 'aria-labelledby="django-dependency-title django-dependency-desc"' in content
+    assert re.search(
+        r'href="https://github\.com/[^/]+/[^/]+/blob/[0-9a-f]{40}/[^"#]*'
+        r'(?:pyproject\.toml|setup\.cfg|requirements[^"#]*\.txt)',
+        content,
+    )
+    schemas = [
+        json.loads(value)
+        for value in re.findall(
+            r'<script type="application/ld\+json">(.*?)</script>', content, re.DOTALL
+        )
+    ]
+    article = next(value for value in schemas if value.get("@type") == "BlogPosting")
+    assert article["mainEntityOfPage"]["@id"] == canonical_url
+    assert article["author"] == {"@type": "Organization", "name": "Browse Awesome Team"}
+    assert article["articleBody"]
+    graph = next(value["@graph"] for value in schemas if "@graph" in value)
+    assert {value["@type"] for value in graph} == {"HowTo", "BreadcrumbList"}
+    how_to = next(value for value in graph if value["@type"] == "HowTo")
+    assert [step["name"] for step in how_to["step"]] == [
+        "Start with a discovery filter, not a verdict",
+        "Open the original file and fix the revision",
+        "Work through the factory_boy match",
+        "Contrast a project dependency with an application decision",
+    ]
+    for number, step in enumerate(how_to["step"], start=1):
+        assert step["position"] == number
+        assert f"<h2>{number}. {step['name']}</h2>" in content
+    breadcrumbs = next(value for value in graph if value["@type"] == "BreadcrumbList")
+    assert [item["item"] for item in breadcrumbs["itemListElement"]] == [
+        "https://browseawesome.com/",
+        "https://browseawesome.com/blog/",
+        canonical_url,
+    ]
+
+
+@pytest.mark.parametrize("source_path", ["/blog/", "/blog/how-to-shortlist-github-repositories/"])
+def test_published_django_discovery_guide_has_editorial_links(client, source_path):
+    response = client.get(source_path)
+
+    assert response.status_code == 200
+    assert 'href="/blog/find-django-github-projects/"' in response_text(response)

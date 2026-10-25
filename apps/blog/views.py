@@ -12,6 +12,7 @@ from apps.blog.services import (
     blog_index_url,
     blog_post_schema,
     default_blog_image_url,
+    django_dependency_schema,
     get_blog_post,
     json_ld,
     list_blog_posts,
@@ -56,6 +57,8 @@ def post_detail(request, slug):
                 if post.slug == "search-awesome-lists-with-mcp"
                 else json_ld(archive_testing_schema(post))
                 if post.slug == "test-saved-webpages-offline"
+                else json_ld(django_dependency_schema(post))
+                if post.slug == "find-django-github-projects"
                 else json_ld(blog_breadcrumb_schema(post))
             ),
         },
