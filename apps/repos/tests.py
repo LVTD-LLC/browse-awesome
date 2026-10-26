@@ -1103,6 +1103,7 @@ def test_starred_repository_search_uses_shared_repository_filters(auth_client, p
         url="https://github.com/django/django",
         description="Django web framework",
         language="Python",
+        license_name="MIT",
         topics=["django", "python"],
         generated_tags=["web-framework"],
         detected_stacks=["django"],
@@ -1120,6 +1121,7 @@ def test_starred_repository_search_uses_shared_repository_filters(auth_client, p
         url="https://github.com/nodejs/node",
         description="JavaScript runtime",
         language="JavaScript",
+        license_name="Apache-2.0",
         topics=["javascript", "runtime"],
         generated_tags=["server-runtime"],
         stars=110000,
@@ -1135,6 +1137,7 @@ def test_starred_repository_search_uses_shared_repository_filters(auth_client, p
         url="https://github.com/example/django-tool",
         description="Django web framework",
         language="Python",
+        license_name="GPL-3.0",
         topics=["django"],
         generated_tags=["web-framework"],
         stars=90000,
@@ -1157,6 +1160,7 @@ def test_starred_repository_search_uses_shared_repository_filters(auth_client, p
             "generated_tag": "web-framework",
             "stack": "django",
             "package_manager": "poetry",
+            "license": "MIT",
             "min_stars": "50",
             "updated_days": "30",
             "min_age_years": "10",
@@ -1167,6 +1171,8 @@ def test_starred_repository_search_uses_shared_repository_filters(auth_client, p
     )
     content = response.content.decode()
 
+    assert list(response.context["license_options"]) == ["Apache-2.0", "MIT"]
+    assert 'aria-label="Remove License label filter: MIT"' in content
     assert response.status_code == 200
     assert "django/django" in content
     assert "nodejs/node" not in content
@@ -1199,7 +1205,7 @@ def test_starred_repository_search_uses_shared_repository_filters(auth_client, p
 
 def test_repository_filter_remove_querystring_resets_page_and_coupled_params():
     params = QueryDict(
-        "page=2&q=django&language=Python&framework=django&stack=django&sort=forks&sort_direction=asc"
+        "page=2&q=django&language=Python&framework=django&stack=django&sort=forks&sort_direction=asc&license=MIT"
     )
 
     querystring = repository_filter_remove_querystring(params, "framework")
@@ -1248,6 +1254,12 @@ def test_repository_filter_remove_querystring_resets_page_and_coupled_params():
     assert "has_file=AGENTS.md" in dict_querystring
     assert "has_file=DESIGN.md" in dict_querystring
     assert "q=django" in dict_querystring
+
+    license_querystring = repository_filter_remove_querystring(params, "license")
+    assert "license=" not in license_querystring
+    assert "q=django" in license_querystring
+    assert "framework=django" in license_querystring
+    assert "page=" not in license_querystring
 
 
 def stub_repository_readme(monkeypatch, content="# Django\n"):
@@ -4336,6 +4348,7 @@ def test_public_repository_filter_options_are_cached():
             url="https://github.com/django/django",
             description="The Web framework",
             language="Python",
+            license_name="BSD-3-Clause",
             topics=["django"],
             generated_tags=["web-framework"],
             detected_stacks=["django"],
@@ -4346,6 +4359,7 @@ def test_public_repository_filter_options_are_cached():
 
         first_options = public_repository_filter_options()
 
+        assert first_options["license_options"] == ["BSD-3-Clause"]
         assert first_options["languages"] == ["Python"]
         assert first_options["awesome_lists"][0].repo_count == 1
         assert first_options["topic_options"] == [{"name": "django", "count": 1}]
@@ -4597,6 +4611,7 @@ def test_repository_search_filters_by_topic_and_generated_tag():
         generated_tags=["web-framework", "orm"],
         detected_stacks=["django"],
         package_managers=["poetry"],
+        license_name="MIT",
         stars=50,
     )
     node_repo = Repository.objects.create(
@@ -4604,7 +4619,8 @@ def test_repository_search_filters_by_topic_and_generated_tag():
         owner="nodejs",
         name="node",
         url="https://github.com/nodejs/node",
-        description="JavaScript runtime",
+        description="JavaScript runtime with MIT examples",
+        license_name="MIT-0",
         topics=["javascript", "runtime"],
         generated_tags=["server-runtime"],
         detected_stacks=["express"],
@@ -4619,6 +4635,11 @@ def test_repository_search_filters_by_topic_and_generated_tag():
     assert list(repository_search_queryset({"package_manager": "npm"})) == [node_repo]
     assert list(repository_search_queryset({"q": "orm"})) == [django_repo]
     assert list(repository_search_queryset({"q": "express"})) == [node_repo]
+
+    assert list(repository_search_queryset({"license": "MIT"})) == [django_repo]
+    assert list(repository_search_queryset({"license": " mit ", "q": "Django"})) == [django_repo]
+    assert list(repository_search_queryset({"license": "MIT-0"})) == [node_repo]
+    assert list(repository_search_queryset({"license": "Apache-2.0"})) == []
 
 
 @pytest.mark.django_db
@@ -5453,7 +5474,7 @@ def test_search_page_renders(client):
     )
     AwesomeListItem.objects.create(awesome_list=active_list, repository=repo)
     AwesomeListItem.objects.create(awesome_list=active_list, repository=hidden_repo)
-    response = client.get(reverse("repos:search"), {"q": "framework"})
+    response = client.get(reverse("repos:search"), {"q": "framework", "license": "bsd-3-clause"})
     content = response.content
     assert response.status_code == 200
     assert b"django/django" in content
@@ -5487,6 +5508,9 @@ def test_search_page_renders(client):
     assert b'href="/repos/?stack=django"' in content
     assert b'href="/repos/?package_manager=pip"' in content
     assert b'href="/repos/?generated_tag=web-framework"' in content
+    assert list(response.context["license_options"]) == ["BSD-3-Clause"]
+    assert b'aria-label="Remove License label filter: bsd-3-clause"' in content
+    assert b"not a license audit" in content
     assert b"BSD-3-Clause" in content
     assert b"12 open" in content
     assert_option_label_with_count(content, "web-framework", 1)
@@ -6413,6 +6437,7 @@ def test_awesome_list_detail_page_filters_repositories(client):
         url="https://github.com/django/django",
         description="The Django web framework",
         language="Python",
+        license_name="MIT",
         topics=["django", "python"],
         generated_tags=["web-framework"],
         detected_stacks=["django"],
@@ -6429,6 +6454,7 @@ def test_awesome_list_detail_page_filters_repositories(client):
         url="https://github.com/nodejs/node",
         description="JavaScript runtime",
         language="JavaScript",
+        license_name="MIT-0",
         topics=["javascript", "runtime"],
         generated_tags=["server-runtime"],
         detected_stacks=["express"],
@@ -6449,6 +6475,7 @@ def test_awesome_list_detail_page_filters_repositories(client):
             "topic": "django",
             "generated_tag": "web-framework",
             "framework": "django",
+            "license": "MIT",
             "min_stars": "50",
             "updated_days": "30",
             "min_age_years": "10",
@@ -6459,6 +6486,7 @@ def test_awesome_list_detail_page_filters_repositories(client):
         },
     )
 
+    assert list(response.context["license_options"]) == ["MIT", "MIT-0"]
     assert response.status_code == 200
     content = response.content.decode()
     assert "django/django" in content
@@ -7689,7 +7717,9 @@ def test_repository_detail_page_renders_similar_repositories(client, settings):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("params", [{"q": "demo"}, {"sort": "stars"}, {"stack": "django"}])
+@pytest.mark.parametrize(
+    "params", [{"q": "demo"}, {"sort": "stars"}, {"stack": "django"}, {"license": "MIT"}]
+)
 def test_stack_starting_points_do_not_reset_refined_search(client, params):
     Repository.objects.create(
         full_name="sample/demo",

@@ -1,6 +1,6 @@
 from django.core.cache import cache
 
-PUBLIC_REPOSITORY_FILTER_OPTIONS_CACHE_KEY = "repos:public-filter-options:v1"
+PUBLIC_REPOSITORY_FILTER_OPTIONS_CACHE_KEY = "repos:public-filter-options:v2"
 PUBLIC_REPOSITORY_FILTER_OPTIONS_CACHE_TIMEOUT_SECONDS = 10 * 60
 
 
