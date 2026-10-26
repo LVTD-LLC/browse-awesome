@@ -220,6 +220,7 @@ REPOSITORY_FILTER_PARAM_NAMES = (
     "framework",
     "stack",
     "package_manager",
+    "license",
     "has_file",
     "min_stars",
     "updated_days",
@@ -238,6 +239,7 @@ REPOSITORY_ADVANCED_FILTER_PARAM_NAMES = (
     "framework",
     "stack",
     "package_manager",
+    "license",
     "has_file",
     "min_stars",
     "unmaintained_days",
@@ -274,6 +276,7 @@ REPOSITORY_FILTER_LABELS = {
     "framework": "Framework",
     "stack": "Framework",
     "package_manager": "Package manager",
+    "license": "License label",
     "has_file": "Has file",
     "min_stars": "Min stars",
     "updated_days": "Updated",
@@ -557,6 +560,12 @@ def public_repository_filter_options() -> dict:
             .distinct()
             .order_by("language")
         ),
+        "license_options": list(
+            base_queryset.exclude(license_name="")
+            .values_list("license_name", flat=True)
+            .distinct()
+            .order_by("license_name")
+        ),
         "topic_options": repository_json_value_counts("topics"),
         "generated_tag_options": repository_json_value_counts("generated_tags"),
         "stack_options": labeled_repository_value_counts("detected_stacks", stack_label),
@@ -726,6 +735,7 @@ def repository_filter_context(
     generated_tag_options=None,
     stack_options=None,
     package_manager_options=None,
+    license_options=None,
 ):
     params = repository_search_params(request)
     if not show_list_filter:
@@ -744,6 +754,13 @@ def repository_filter_context(
             .values_list("language", flat=True)
             .distinct()
             .order_by("language")
+        )
+    if license_options is None:
+        license_options = (
+            base_queryset.exclude(license_name="")
+            .values_list("license_name", flat=True)
+            .distinct()
+            .order_by("license_name")
         )
     if topic_options is None:
         topic_options = repository_json_value_counts(
@@ -787,6 +804,7 @@ def repository_filter_context(
         "active_repository_filter_count": len(active_filters),
         "awesome_lists": awesome_lists,
         "languages": languages,
+        "license_options": license_options,
         "topic_options": topic_options,
         "generated_tag_options": generated_tag_options,
         "stack_options": stack_options,
@@ -872,6 +890,7 @@ class RepositorySearchView(ListView):
                 reset_url=search_url,
                 awesome_lists=filter_options["awesome_lists"],
                 languages=filter_options["languages"],
+                license_options=filter_options["license_options"],
                 topic_options=filter_options["topic_options"],
                 generated_tag_options=filter_options["generated_tag_options"],
                 stack_options=filter_options["stack_options"],

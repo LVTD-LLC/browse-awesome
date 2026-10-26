@@ -33,6 +33,9 @@ The goal of this project is to make that ecosystem easier to explore:
 - Stores repository metadata, README content, topics, generated tags, and historical
   snapshots.
 - Provides repository search, awesome-list search, detail pages, filters, and sorting.
+- Website repository search can combine a task or stack with an exact stored GitHub
+  license label. These labels are discovery metadata, not a license audit; verify
+  the current upstream terms before reuse.
 - Shows repository history, similar repositories, and list membership where data is
   available.
 - Lets users request new awesome lists to add to the catalog.

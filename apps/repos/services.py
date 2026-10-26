@@ -2452,6 +2452,10 @@ def _apply_repository_taxonomy_filters(qs, params, *, allow_list_filter: bool):
     if language:
         qs = qs.filter(language__iexact=language)
 
+    license_name = (params.get("license") or "").strip()
+    if license_name:
+        qs = qs.filter(license_name__iexact=license_name)
+
     list_value = (params.get("list") or "").strip() if allow_list_filter else ""
     if list_value:
         qs = qs.filter(
