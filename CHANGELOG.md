@@ -2,6 +2,10 @@
 
 ## 2026-10-27
 
+- Add a server-rendered GitHub repository comparison tool with stored metadata dates,
+  awesome-list source links, explicit missing observations and an evaluation method;
+  keep query-string results out of the index and leave catalog records unchanged.
+
 - Add an exact stored-license-label filter to website repository search, including
   awesome-list and imported-star scopes, with matching suggestions, removable chips and
   query-preserving empty-result recovery. Keep upstream license verification

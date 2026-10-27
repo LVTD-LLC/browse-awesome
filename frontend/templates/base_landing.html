@@ -81,6 +81,9 @@
             <footer class="bg-white dark:bg-gray-950">
                 <div class="px-6 py-12 mx-auto max-w-[104rem] md:flex md:items-center md:justify-between lg:px-8">
                     <div class="flex justify-center space-x-6 md:order-2">
+                        {% url 'tools' as tools_url %}
+                        <a href="{{ tools_url|default:'/tools/' }}"
+                           class="touch-inline-link text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">Tools</a>
                         {% url 'blog:post_list' as blog_url %}
                         <a href="{{ blog_url|default:'/blog/' }}"
                            class="touch-inline-link text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100">

@@ -1,0 +1,105 @@
+{% extends "base_landing.html" %}
+{% load humanize %}
+{% block meta %}
+    {% include "components/seo_meta.html" with title="Compare GitHub repositories | Browse Awesome" description="Compare two indexed GitHub repositories: stored stars, language, license labels, archive status, sync dates and awesome-list sources. No winner scores." robots=robots canonical_path=canonical_path %}
+{% endblock meta %}
+{% block content %}
+    <div class="mx-auto max-w-6xl pb-10">
+        <nav aria-label="Breadcrumb"
+             class="text-sm text-gray-600 dark:text-gray-400">
+            <a href="{% url 'tools' %}" class="underline">Tools</a> <span aria-hidden="true">/</span> Compare repositories
+        </nav>
+        <header class="mt-6">
+            <p class="text-sm font-semibold text-green-700 dark:text-green-400">From shortlist to evidence</p>
+            <h1 class="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Compare GitHub repositories</h1>
+            <p class="mt-4 max-w-4xl text-lg leading-8 text-gray-600 dark:text-gray-300">
+                Compare two GitHub repositories already indexed by Browse Awesome. Enter each exact owner/repository or GitHub URL to view stored metadata, observation dates and awesome-list sources side by side. Use the differences to plan your upstream checks, not to select a winner from stars or infer that a project is maintained.
+            </p>
+        </header>
+        <section class="mt-7 rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-gray-900 sm:p-6"
+                 aria-labelledby="comparison-form-heading">
+            <h2 id="comparison-form-heading" class="text-lg font-bold">Choose two repository identities</h2>
+            <p id="comparison-input-help"
+               class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                Use owner/repo or https://github.com/owner/repo. Repository subpages, query strings and other hosts are not accepted. Nothing is fetched from GitHub when you submit.
+            </p>
+            <form method="get" action="{% url 'compare_repositories' %}" class="mt-5">
+                {% if form.non_field_errors %}
+                    <div role="alert" class="mb-4 text-sm text-red-700 dark:text-red-300">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="id_first" class="block text-sm font-semibold">First repository</label>
+                        <input id="id_first"
+                               name="first"
+                               type="text"
+                               maxlength="255"
+                               value="{{ first_value }}"
+                               placeholder="psf/requests"
+                               aria-describedby="comparison-input-help{% if form.first.errors %} first-errors{% endif %}"
+                               {% if form.first.errors %}aria-invalid="true"{% endif %}
+                               class="mt-2 min-h-11 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-950 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                        {% if form.first.errors %}
+                            <div id="first-errors"
+                                 role="alert"
+                                 class="mt-2 text-sm text-red-700 dark:text-red-300">{{ form.first.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_second" class="block text-sm font-semibold">Second repository</label>
+                        <input id="id_second"
+                               name="second"
+                               type="text"
+                               maxlength="255"
+                               value="{{ second_value }}"
+                               placeholder="encode/httpx"
+                               aria-describedby="comparison-input-help{% if form.second.errors %} second-errors{% endif %}"
+                               {% if form.second.errors %}aria-invalid="true"{% endif %}
+                               class="mt-2 min-h-11 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-950 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 dark:border-gray-700 dark:bg-gray-950 dark:text-white" />
+                        {% if form.second.errors %}
+                            <div id="second-errors"
+                                 role="alert"
+                                 class="mt-2 text-sm text-red-700 dark:text-red-300">{{ form.second.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-5 flex flex-wrap items-center gap-4">
+                    <button type="submit"
+                            class="min-h-11 rounded-full bg-green-700 px-6 py-3 text-sm font-semibold text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
+                        Compare repositories
+                    </button>
+                    <a href="{% url 'compare_repositories' %}"
+                       class="touch-inline-link text-sm font-semibold underline">Reset</a>
+                </div>
+            </form>
+        </section>
+        {% if columns %}
+            <section class="mt-8" aria-labelledby="comparison-results-heading">
+                <h2 id="comparison-results-heading" class="text-2xl font-bold">
+                    {% if is_example %}
+                        Example comparison
+                    {% else %}
+                        Catalog comparison
+                    {% endif %}
+                </h2>
+                <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                    {% if is_example %}Requests and HTTPX demonstrate the fields, not interchangeable recommendations.{% endif %}
+                    Stored observations, not a live GitHub check. Dates are UTC. A missing observation is not a zero or a pass.
+                </p>
+                <div class="mt-5 grid gap-5 md:grid-cols-2">
+                    {% for column in columns %}
+                        {% include "pages/partials/comparison_column.html" %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% elif not form.is_bound %}
+            <p class="mt-6 rounded-xl border border-gray-200 p-4 text-sm leading-6 text-gray-600 dark:border-gray-800 dark:text-gray-300">
+                The demonstration pair is not fully available in this catalog. Choose two identities from <a href="{% url 'repos:search' %}" class="underline">repository search</a>; unavailable entries remain explicitly unobserved.
+            </p>
+        {% endif %}
+        {% include "pages/partials/comparison_methodology.html" %}
+    </div>
+{% endblock content %}
+{% block schema %}
+    <script type="application/ld+json">{{ schema_json|safe }}</script>
+{% endblock schema %}

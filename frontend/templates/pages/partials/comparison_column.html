@@ -1,0 +1,109 @@
+{% load humanize tz %}
+{% timezone "UTC" %}
+<article class="min-w-0 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
+    <div class="border-b border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-gray-900">
+        <h3 class="break-all text-lg font-bold">{{ column.identity }}</h3>
+        {% if column.repository %}
+            <p class="mt-2 break-words text-sm leading-6 text-gray-600 dark:text-gray-300">
+                {{ column.repository.description|default:"No description recorded."|truncatechars:300 }}
+            </p>
+            <a href="{{ column.repository.get_absolute_url }}"
+               class="mt-3 inline-block min-h-11 py-2 text-sm font-semibold text-green-700 underline dark:text-green-400">Open catalog detail →</a>
+            <a href="https://github.com/{{ column.identity }}"
+               class="ml-3 mt-3 inline-block min-h-11 py-2 text-sm font-semibold underline">Open GitHub →</a>
+        {% else %}
+            <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                Not observed in the public repository catalog. No metadata was fetched. This does not establish whether the upstream repository exists, is public, or meets your requirements.
+            </p>
+        {% endif %}
+    </div>
+    {% if column.repository %}
+        {% with repository=column.repository %}
+            <dl class="divide-y divide-gray-200 px-5 text-sm dark:divide-gray-800">
+                <div class="py-4">
+                    <dt class="font-semibold">GitHub metadata synced</dt>
+                    <dd class="mt-1 text-gray-600 dark:text-gray-300">
+                        {{ repository.last_synced_at|date:"Y-m-d H:i T"|default:"Not recorded — metadata not checked" }}
+                    </dd>
+                </div>
+                <div class="py-4">
+                    <dt class="font-semibold">Stored stars</dt>
+                    <dd class="mt-1 text-gray-600 dark:text-gray-300">
+                        {% if repository.last_synced_at %}
+                            {{ repository.stars|intcomma }}
+                        {% else %}
+                            Not checked
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="py-4">
+                    <dt class="font-semibold">Primary language</dt>
+                    <dd class="mt-1 text-gray-600 dark:text-gray-300">
+                        {{ repository.language|default:"Not recorded" }}
+                    </dd>
+                </div>
+                <div class="py-4">
+                    <dt class="font-semibold">Stored license label</dt>
+                    <dd class="mt-1 text-gray-600 dark:text-gray-300">
+                        {{ repository.license_name|default:"Not recorded" }}. Verify the upstream license files and terms; this label is not a license review.
+                    </dd>
+                </div>
+                <div class="py-4">
+                    <dt class="font-semibold">Archived on GitHub</dt>
+                    <dd class="mt-1 text-gray-600 dark:text-gray-300">
+                        {% if not repository.last_synced_at %}
+                            Not checked
+                        {% elif repository.is_archived %}
+                            Yes, at last metadata sync
+                        {% else %}
+                            No, at last metadata sync — not a maintenance verdict
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="py-4">
+                    <dt class="font-semibold">Stored last GitHub push</dt>
+                    <dd class="mt-1 text-gray-600 dark:text-gray-300">
+                        {{ repository.github_pushed_at|date:"Y-m-d H:i T"|default:"Not recorded" }}. A push is not a release.
+                    </dd>
+                </div>
+                <div class="py-4">
+                    <dt class="font-semibold">Detected stacks</dt>
+                    <dd class="mt-1 text-gray-600 dark:text-gray-300">
+                        {% if column.stacks %}
+                            {{ column.stacks|join:", " }} (up to eight shown).
+                        {% else %}
+                            No stack observation shown; not proof of absence.
+                        {% endif %}
+                        <br />
+                        Detection date: {{ repository.stack_detected_at|date:"Y-m-d H:i T"|default:"Not recorded" }}. Inspect dependency evidence on the catalog detail page.
+                    </dd>
+                </div>
+            </dl>
+            <section class="border-t border-gray-200 p-5 dark:border-gray-800"
+                     aria-label="Awesome-list sources for {{ column.identity }}">
+                <h4 class="text-sm font-bold text-blue-700 dark:text-blue-300">Active awesome-list sources</h4>
+                <ul class="mt-3 space-y-3 text-sm">
+                    {% for item in column.sources %}
+                        <li class="break-words">
+                            <a href="{{ item.awesome_list.get_absolute_url }}"
+                               class="font-semibold underline">{{ item.awesome_list.name }}</a>
+                            <p class="mt-1 text-gray-600 dark:text-gray-300">
+                                List last scanned: {{ item.awesome_list.last_scanned_at|date:"Y-m-d H:i T"|default:"Not recorded" }}
+                            </p>
+                        </li>
+                    {% empty %}
+                        <li class="leading-6 text-gray-600 dark:text-gray-300">
+                            No active, enabled awesome-list membership recorded here. This is not a claim about all lists on GitHub.
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if column.has_more_sources %}
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-300">
+                        First ten sources shown. <a href="{{ repository.get_absolute_url }}" class="underline">Open detail for additional memberships</a>.
+                    </p>
+                {% endif %}
+            </section>
+        {% endwith %}
+    {% endif %}
+</article>
+{% endtimezone %}

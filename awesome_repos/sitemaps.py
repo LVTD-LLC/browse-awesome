@@ -84,6 +84,8 @@ class StaticViewSitemap(ConfiguredDomainSitemap):
     def items(self):
         return [
             "landing",
+            "tools",
+            "compare_repositories",
             "repos:search",
             "repos:updates_index",
             "repos:list",
@@ -96,6 +98,11 @@ class StaticViewSitemap(ConfiguredDomainSitemap):
 
     def location(self, item):
         return reverse(item)
+
+    def lastmod(self, item):
+        if item in {"tools", "compare_repositories"}:
+            return datetime(2026, 10, 27, 22, 15, tzinfo=UTC)
+        return None
 
 
 class RepositorySitemap(ConfiguredDomainSitemap):

@@ -72,6 +72,8 @@ For a worked star-count example and the limits of these comparisons, see [GitHub
 
 These descriptions follow the [repository search implementation](https://github.com/LVTD-LLC/awesome/blob/d54bef89093fe25fa1b60c07c4954bb12d1e1625/apps/repos/services.py), checked on October 9, 2026. They describe this version of the catalog, not a promise that every upstream repository was refreshed today.
 
+Put two exact identities in the [GitHub repository comparison tool](/tools/compare-github-repositories/) to read their stored metadata, sync dates and awesome-list sources side by side. It does not assign a winner or replace the upstream checks below.
+
 ## 4. Check upstream evidence
 
 Open each candidate's repository detail page, then follow its GitHub link. Start with the README and version-specific documentation. Find the exact capability you need and any stated limitations. Check that an example applies to the version you expect to install rather than an unreleased branch.
