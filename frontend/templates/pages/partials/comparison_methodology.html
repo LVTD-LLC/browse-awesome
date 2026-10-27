@@ -1,0 +1,82 @@
+<article class="mt-12 max-w-4xl space-y-8 text-base leading-8 text-gray-700 dark:text-gray-300"
+         aria-label="Comparison methodology and interpretation">
+    <section>
+        <h2 class="text-2xl font-bold text-gray-950 dark:text-white">How to read a GitHub repository comparison</h2>
+        <p class="mt-4">
+            Start with two candidates for the same job, not the two largest projects you know. Write the requirement that would make either candidate worth testing: a supported runtime, an integration, a deployment constraint or a particular operation. The comparison makes catalog differences visible. It does not determine whether either project implements that requirement.
+        </p>
+        <p class="mt-4">
+            Read the metadata sync date before comparing the numbers. Two star counts captured on different dates are not a simultaneous measurement. GitHub describes <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/saving-repositories-with-stars"
+    class="underline">stars as a way to save repositories and show appreciation</a>; a larger count does not prove better software, compatibility or security. If growth matters, use the <a href="/blog/github-star-growth/" class="underline">star-growth baseline guide</a> to distinguish a stored count from a change over a measured window.
+        </p>
+        <aside class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100">
+            <h3 class="font-bold">A timestamp is part of the fact</h3>
+            <p class="mt-2">
+                Metadata sync, last GitHub push, stack detection and list scan dates answer different questions. A recent list scan does not refresh a repository's star count. A recent push does not establish that a new release contains the change you need.
+            </p>
+        </aside>
+    </section>
+    <section>
+        <h2 class="text-2xl font-bold text-gray-950 dark:text-white">What Browse Awesome checks—and what it does not</h2>
+        <p class="mt-4">
+            This tool looks up two exact identities in Browse Awesome's existing public repository catalog. It reads stored GitHub metadata and recorded awesome-list memberships. Submitting the form does not call GitHub, scan source code, install dependencies or update the catalog. A valid identity that is missing from this catalog stays unobserved; the tool does not infer that the repository is missing from GitHub.
+        </p>
+        <figure class="my-6 rounded-2xl border border-gray-200 p-5 dark:border-gray-800">
+            <svg viewBox="0 0 400 300"
+                 class="mx-auto w-full max-w-lg text-green-700 dark:text-green-300"
+                 role="img"
+                 aria-labelledby="compare-repositories-flow-title compare-repositories-flow-desc">
+                <title id="compare-repositories-flow-title">From repository identity to an upstream check</title>
+                <desc id="compare-repositories-flow-desc">Two exact identities lead to stored catalog observations, then to an upstream evidence check. The catalog is not a live audit.</desc>
+                <g fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="392" height="76" rx="12" />
+                <path d="M200 88v16m-7-7 7 7 7-7" />
+                <rect x="4" y="112" width="392" height="76" rx="12" />
+                <path d="M200 196v16m-7-7 7 7 7-7" />
+                <rect x="4" y="220" width="392" height="76" rx="12" />
+                </g>
+                <g fill="currentColor" text-anchor="middle" font-size="20" font-weight="600">
+                <text x="200" y="36">Exact identities</text><text x="200" y="62">owner/repo</text>
+                <text x="200" y="144">Stored observations</text><text x="200" y="170">Check their dates</text>
+                <text x="200" y="252">Upstream evidence</text><text x="200" y="278">Verify your task</text>
+                </g>
+            </svg>
+            <figcaption class="mt-3 text-sm leading-6">
+                Enter exact identities, read the dated catalog observations, then verify the required behavior upstream. These are separate evidence steps.
+            </figcaption>
+        </figure>
+        <p class="mt-4">
+            An archive value is shown only when a metadata sync is recorded. “No” means not archived at that observation, not actively maintained. GitHub explains that <a href="https://docs.github.com/en/repositories/archiving-a-github-repository/archiving-repositories"
+    class="underline">archived repositories are read-only</a>. An unarchived project still needs release, issue-response and documentation checks. The stored license label is likewise a discovery aid: read the actual files and the terms applying to your intended version. <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository"
+    class="underline">GitHub's licensing documentation</a> explains why public visibility is not a substitute for a license.
+        </p>
+        <p class="mt-4">
+            Detected stack labels come from stored dependency-manifest observations, not a full architectural review. A dependency in a test group or example directory may not be an application's runtime requirement. Follow the catalog detail link to inspect the available evidence and detection date. Missing labels do not prove that a technology is absent.
+        </p>
+    </section>
+    <section>
+        <h2 class="text-2xl font-bold text-gray-950 dark:text-white">Why awesome-list sources belong beside the numbers</h2>
+        <p class="mt-4">
+            List membership gives you a route back to the discovery context. Open the source list, find its category and inspect how the curator describes the project. Several mentions can help you discover more contexts; they do not establish independent endorsements. Lists can share entries, use different inclusion rules or retain older recommendations.
+        </p>
+        <p class="mt-4">
+            The comparison shows up to ten memberships in lists currently marked active and enabled in this catalog, with each list's last recorded scan date. “No membership recorded” describes this view, not all GitHub lists. Additional recorded memberships remain available on the repository detail page. Use the <a href="{% url 'repos:list' %}" class="underline">awesome-list directory</a> to find neighboring categories rather than treating a mention count as a ranking.
+        </p>
+        <aside class="rounded-2xl border border-blue-200 bg-blue-50 p-5 text-blue-950 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-100">
+            <h3 class="font-bold">Worked example: compare the evidence, not a winner</h3>
+            <p class="mt-2">
+                Suppose your Python application needs an HTTP client. Compare <strong>psf/requests</strong> and <strong>encode/httpx</strong> when both are indexed. Read the displayed dates, then check each project's versioned documentation for your required synchronous or asynchronous operation. A shared language or license label does not settle API fit. This example demonstrates an evaluation question; it does not claim either project passes it or that their features are interchangeable.
+            </p>
+        </aside>
+    </section>
+    <section>
+        <h2 class="text-2xl font-bold text-gray-950 dark:text-white">Turn the comparison into a small trial</h2>
+        <p class="mt-4">
+            For each candidate, record one evidence URL, the version you checked, the unresolved requirement and your next test. Keep “not checked” separate from “does not support it.” Follow the <a href="/blog/how-to-shortlist-github-repositories/" class="underline">repository shortlisting worksheet</a> for a repeatable evaluation. If neither candidate fits, return to <a href="{% url 'repos:search' %}" class="underline">repository search</a> with a more specific task instead of choosing the larger star count.
+        </p>
+        <p class="mt-4">
+            Methodology checked October 27, 2026 against Browse Awesome's comparison code and GitHub's <a href="https://docs.github.com/en/rest/repos/repos#get-a-repository"
+    class="underline">repository metadata reference</a>. That date describes the method, not the freshness of every catalog entry. Stored data can change on later catalog refreshes. Cite this tool as “Browse Awesome, Compare GitHub repositories,” link to this base page and record the observation dates in any comparison you publish.
+        </p>
+    </section>
+</article>

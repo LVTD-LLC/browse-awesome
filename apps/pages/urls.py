@@ -1,8 +1,14 @@
 from django.urls import path
 
-from apps.pages import newsletter, views
+from apps.pages import newsletter, tools, views
 
 urlpatterns = [
+    path("tools/", tools.tools_index, name="tools"),
+    path(
+        "tools/compare-github-repositories/",
+        tools.compare_repositories,
+        name="compare_repositories",
+    ),
     path("newsletter/", newsletter.subscribe, name="newsletter"),
     path("newsletter/thanks/", newsletter.thanks, name="newsletter_thanks"),
     path("", views.LandingPageView.as_view(), name="landing"),
