@@ -7,7 +7,7 @@
         </p>
         <p class="mt-4">
             Read the metadata sync date before comparing the numbers. Two star counts captured on different dates are not a simultaneous measurement. GitHub describes <a href="https://docs.github.com/en/get-started/exploring-projects-on-github/saving-repositories-with-stars"
-    class="underline">stars as a way to save repositories and show appreciation</a>; a larger count does not prove better software, compatibility or security. If growth matters, use the <a href="/blog/github-star-growth/" class="underline">star-growth baseline guide</a> to distinguish a stored count from a change over a measured window.
+    class="underline">stars as a way to save repositories and show appreciation</a>; a larger count does not prove better software, compatibility or security. If growth matters, use the <a href="{% url 'blog:post_detail' slug='github-star-growth' %}" class="underline">star-growth baseline guide</a> to distinguish a stored count from a change over a measured window.
         </p>
         <aside class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-100">
             <h3 class="font-bold">A timestamp is part of the fact</h3>
@@ -72,7 +72,7 @@
     <section>
         <h2 class="text-2xl font-bold text-gray-950 dark:text-white">Turn the comparison into a small trial</h2>
         <p class="mt-4">
-            For each candidate, record one evidence URL, the version you checked, the unresolved requirement and your next test. Keep “not checked” separate from “does not support it.” Follow the <a href="/blog/how-to-shortlist-github-repositories/" class="underline">repository shortlisting worksheet</a> for a repeatable evaluation. If neither candidate fits, return to <a href="{% url 'repos:search' %}" class="underline">repository search</a> with a more specific task instead of choosing the larger star count.
+            For each candidate, record one evidence URL, the version you checked, the unresolved requirement and your next test. Keep “not checked” separate from “does not support it.” Follow the <a href="{% url 'blog:post_detail' slug='how-to-shortlist-github-repositories' %}" class="underline">repository shortlisting worksheet</a> for a repeatable evaluation. If neither candidate fits, return to <a href="{% url 'repos:search' %}" class="underline">repository search</a> with a more specific task instead of choosing the larger star count.
         </p>
         <p class="mt-4">
             Methodology checked October 27, 2026 against Browse Awesome's comparison code and GitHub's <a href="https://docs.github.com/en/rest/repos/repos#get-a-repository"

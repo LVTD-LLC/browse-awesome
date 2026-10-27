@@ -18,7 +18,7 @@
             <span class="mt-4 inline-block font-semibold text-green-700 dark:text-green-400">Open comparison tool →</span>
         </a>
         <p class="mt-6 leading-7 text-gray-600 dark:text-gray-300">
-            Need candidates first? <a href="{% url 'repos:search' %}" class="underline">Search the repository catalog</a> or follow the <a href="/blog/how-to-shortlist-github-repositories/" class="underline">repository shortlisting workflow</a>.
+            Need candidates first? <a href="{% url 'repos:search' %}" class="underline">Search the repository catalog</a> or follow the <a href="{% url 'blog:post_detail' slug='how-to-shortlist-github-repositories' %}" class="underline">repository shortlisting workflow</a>.
         </p>
     </section>
 {% endblock content %}
