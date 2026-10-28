@@ -4,7 +4,7 @@
     {% include "components/seo_meta.html" with title="Compare GitHub repositories | Browse Awesome" description="Compare two indexed GitHub repositories: stored stars, language, license labels, archive status, sync dates and awesome-list sources. No winner scores." robots=robots canonical_path=canonical_path %}
 {% endblock meta %}
 {% block content %}
-    <div class="mx-auto max-w-6xl pb-10">
+    <div class="mx-auto max-w-6xl pb-10" data-comparison-state="{{ comparison_state }}">
         <nav aria-label="Breadcrumb"
              class="text-sm text-gray-600 dark:text-gray-400">
             <a href="{% url 'tools' %}" class="underline">Tools</a> <span aria-hidden="true">/</span> Compare repositories
@@ -24,6 +24,12 @@
                 Use owner/repo or https://github.com/owner/repo. Repository subpages, query strings and other hosts are not accepted. Nothing is fetched from GitHub when you submit.
             </p>
             <form method="get" action="{% url 'compare_repositories' %}" class="mt-5">
+                {% if comparison_state == "prepared" %}
+                    <p class="mb-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                        Your first repository identity is entered. Enter a second repository that solves the same task, then compare the stored evidence.
+                        Need another candidate? <a href="{% url 'repos:search' %}" class="font-semibold underline">Find one in repository search</a>.
+                    </p>
+                {% endif %}
                 {% if form.non_field_errors %}
                     <div role="alert" class="mb-4 text-sm text-red-700 dark:text-red-300">{{ form.non_field_errors }}</div>
                 {% endif %}
@@ -92,7 +98,7 @@
                     {% endfor %}
                 </div>
             </section>
-        {% elif not form.is_bound %}
+        {% elif comparison_state == "empty" %}
             <p class="mt-6 rounded-xl border border-gray-200 p-4 text-sm leading-6 text-gray-600 dark:border-gray-800 dark:text-gray-300">
                 The demonstration pair is not fully available in this catalog. Choose two identities from <a href="{% url 'repos:search' %}" class="underline">repository search</a>; unavailable entries remain explicitly unobserved.
             </p>

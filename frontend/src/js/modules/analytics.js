@@ -39,6 +39,7 @@
     ["empty_keep_search", "empty_keep_search"],
     ["empty_reset_filters", "empty_reset_filters"],
     ["empty_browse_lists", "empty_browse_lists"],
+    ["repository_compare", "repository_compare"],
   ]);
   const catalogFilters = new Set([
     "mode", "list", "language", "topic", "generated_tag", "framework", "stack",
@@ -51,6 +52,7 @@
     "commits_growth_7d", "star_growth", "stars_growth_7d", "liability", "awesome",
     "least_awesome", "name", "repos", "indexed", "scanned",
   ]);
+  const comparisonStates = new Set(["empty", "example", "prepared", "compared", "unobserved", "invalid"]);
   ph.init(config.posthogKey, {
     api_host: config.posthogHost,
     defaults: "2025-05-24",
@@ -90,7 +92,11 @@
       if (config.posthogProfile) client.identify(config.posthogProfile);
       else if (client.get_property("$user_id")) client.reset();
       client.register({ app: "browseawesome" });
-      pageview();
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", pageview, { once: true });
+      } else {
+        pageview();
+      }
     },
   });
   function pageview() {
@@ -111,6 +117,10 @@
       });
     } else if (/^\/repos\/[^/]+\/[^/]+\/$/.test(path)) {
       ph.capture("repository_viewed", { repository: path.split("/").slice(2, 4).join("/") });
+    } else if (path === "/tools/compare-github-repositories/") {
+      // State comes from the rendered result, never from input or query values.
+      const state = document.querySelector("[data-comparison-state]")?.dataset.comparisonState;
+      if (comparisonStates.has(state)) ph.capture("repository_comparison_viewed", { state });
     }
   }
   document.addEventListener("htmx:pushedIntoHistory", pageview);

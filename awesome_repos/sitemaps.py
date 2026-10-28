@@ -100,7 +100,9 @@ class StaticViewSitemap(ConfiguredDomainSitemap):
         return reverse(item)
 
     def lastmod(self, item):
-        if item in {"tools", "compare_repositories"}:
+        if item == "compare_repositories":
+            return datetime(2026, 10, 28, 22, 25, tzinfo=UTC)
+        if item == "tools":
             return datetime(2026, 10, 27, 22, 15, tzinfo=UTC)
         return None
 
