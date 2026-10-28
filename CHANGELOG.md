@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-28
+
+- Carry a repository from its detail page into the comparison tool, ready for a
+  second choice. Distinguish prepared, example, matched and unavailable result
+  views with fixed analytics labels; never capture comparison inputs.
+
 ## 2026-10-27
 
 - Add a server-rendered GitHub repository comparison tool with stored metadata dates,

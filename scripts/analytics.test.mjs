@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
 
-function setup(profile = "", initialUrl = "https://browseawesome.com/repos/?q=private@example.com") {
+function setup(profile = "", initialUrl = "https://browseawesome.com/repos/?q=private@example.com", comparisonState, readyState = "complete") {
   const events = [];
   const handlers = {};
   let options;
@@ -18,8 +18,10 @@ function setup(profile = "", initialUrl = "https://browseawesome.com/repos/?q=pr
   };
   const location = new URL(initialUrl);
   const document = {
+    readyState,
     currentScript: { dataset: { posthogKey: "phc_test", posthogHost: "https://us.i.posthog.com", posthogProfile: profile } },
     addEventListener: (name, callback) => { handlers[name] = callback; },
+    querySelector: () => document.readyState === "loading" || comparisonState === undefined ? null : { dataset: { comparisonState } },
   };
   vm.runInNewContext(readFileSync("frontend/src/js/modules/analytics.js", "utf8"), {
     window: { posthog: ph, location }, document, URL, URLSearchParams,
@@ -27,7 +29,7 @@ function setup(profile = "", initialUrl = "https://browseawesome.com/repos/?q=pr
   const client = { ...ph, capture: (event, properties) => events.push({ event, properties }) };
   ph.capture = () => { throw new Error("bootstrap queue used after SDK loaded"); };
   options.loaded(client);
-  return { events, handlers, location, options };
+  return { events, handlers, location, options, document };
 }
 
 test("one pageview per HTMX URL transition, no raw query", () => {
@@ -87,6 +89,7 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     empty_keep_search: "empty_keep_search",
     empty_reset_filters: "empty_reset_filters",
     empty_browse_lists: "empty_browse_lists",
+    repository_compare: "repository_compare",
   };
   for (const [input, output] of Object.entries(actions)) {
     const link = {
@@ -99,9 +102,36 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     assert.equal(captured.event, "discovery_action_clicked");
     assert.deepEqual(JSON.parse(JSON.stringify(captured.properties)), { action: output });
   }
-  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 23);
+  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 24);
   assert.ok(!JSON.stringify(events).includes("secret@example.com"));
   assert.ok(!JSON.stringify(events).includes("private link label"));
+});
+
+test("comparison events describe rendered states, not submitted or matched identities", () => {
+  const url = "https://browseawesome.com/tools/compare-github-repositories/?first=secret@example.com&second=private/repo";
+  for (const state of ["empty", "example", "prepared", "compared", "unobserved", "invalid"]) {
+    const { events, handlers } = setup("", url, state);
+    handlers["htmx:pushedIntoHistory"]();
+    const views = events.filter((e) => e.event === "repository_comparison_viewed");
+    assert.equal(views.length, 1);
+    assert.deepEqual(JSON.parse(JSON.stringify(views[0].properties)), { state });
+    assert.ok(!JSON.stringify(events).includes("secret@example.com"));
+    assert.ok(!JSON.stringify(events).includes("private/repo"));
+  }
+  for (const state of [undefined, "private/repo", "__proto__"]) {
+    const { events } = setup("", url, state);
+    assert.equal(events.filter((e) => e.event === "repository_comparison_viewed").length, 0);
+  }
+  const other = setup("", "https://browseawesome.com/tools/", "compared");
+  assert.equal(other.events.filter((e) => e.event === "repository_comparison_viewed").length, 0);
+  // A cached SDK may be ready while the body marker has not been parsed yet.
+  const early = setup("", url, "compared", "loading");
+  assert.equal(early.events.length, 0);
+  early.document.readyState = "complete";
+  early.handlers.DOMContentLoaded();
+  early.handlers["htmx:pushedIntoHistory"]();
+  assert.equal(early.events.filter((e) => e.event === "repository_comparison_viewed").length, 1);
+  assert.equal(early.events.filter((e) => e.event === "$pageview").length, 1);
 });
 
 test("unknown, inherited, unmarked and external actions are not task events", () => {

@@ -76,6 +76,17 @@ def tools_index(request):
     return render(request, "pages/tools.html", {"hide_side_ad_rails": True})
 
 
+def _prepared_identity(params):
+    # A contextual link supplies just the first choice; an actual form submit
+    # always includes both fields, including an empty second field.
+    if "second" in params or len(params.getlist("first")) != 1:
+        return None
+    try:
+        return parse_repository_identity(params["first"])
+    except ValueError:
+        return None
+
+
 @require_safe
 def compare_repositories(request):
     # Any query string is a result/variant, not a new indexable landing page.
@@ -84,18 +95,30 @@ def compare_repositories(request):
     form = RepositoryComparisonForm(request.GET if submitted else None)
     columns = []
     is_example = False
-    if submitted:
+    prepared_identity = _prepared_identity(request.GET)
+    comparison_state = "empty"
+    if prepared_identity:
+        form = RepositoryComparisonForm(initial={"first": prepared_identity})
+        comparison_state = "prepared"
+    elif submitted:
+        comparison_state = "invalid"
         # Do not silently resolve ambiguous duplicate query keys.
         if any(len(request.GET.getlist(field)) > 1 for field in ("first", "second")):
             form.is_valid()
             form.add_error(None, "Enter exactly one identity in each repository field.")
         elif form.is_valid():
             columns = comparison_columns((form.cleaned_data["first"], form.cleaned_data["second"]))
+            comparison_state = (
+                "compared"
+                if all(column["repository"] is not None for column in columns)
+                else "unobserved"
+            )
     else:
         example_columns = comparison_columns(EXAMPLE_IDENTITIES)
         if all(column["repository"] is not None for column in example_columns):
             columns = example_columns
             is_example = True
+            comparison_state = "example"
             form = RepositoryComparisonForm(
                 initial={"first": EXAMPLE_IDENTITIES[0], "second": EXAMPLE_IDENTITIES[1]}
             )
@@ -109,6 +132,7 @@ def compare_repositories(request):
             "second_value": str(form["second"].value() or "")[:MAX_IDENTITY_LENGTH],
             "columns": columns,
             "is_example": is_example,
+            "comparison_state": comparison_state,
             "robots": "noindex, follow" if has_query else "index, follow",
             "schema_json": json_ld(_tool_schema()),
             "canonical_path": reverse("compare_repositories"),

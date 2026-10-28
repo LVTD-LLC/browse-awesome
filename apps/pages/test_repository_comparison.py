@@ -97,6 +97,7 @@ def test_base_has_real_guarded_demo_and_indexable_schema(client, catalog, settin
     )
     assert 'value="psf/requests"' in html and 'value="encode/httpx"' in html
     assert "Example comparison" in html
+    assert 'data-comparison-state="example"' in html
     assert "not interchangeable recommendations" in html
     assert "X-Robots-Tag" not in response.headers
     schema = json.loads(
@@ -126,6 +127,7 @@ def test_missing_example_is_not_fabricated_and_valid_missing_stays_unobserved(cl
     )
     html = result.content.decode()
     assert html.count("Not observed in the public repository catalog.") == 2
+    assert 'data-comparison-state="unobserved"' in html
     assert 'href="https://github.com/missing/' not in html
     assert result.headers["X-Robots-Tag"] == "noindex, follow"
 
@@ -152,6 +154,27 @@ def test_results_are_noindex_and_unknown_is_not_zero_or_maintenance(client, cata
     assert "Yes, at last metadata sync" in html
     assert "No stack observation shown; not proof of absence." in html
     assert "Actively maintained" not in html
+    assert 'data-comparison-state="compared"' in html
+
+
+@pytest.mark.django_db
+def test_detail_handoff_prepares_one_choice_without_claiming_a_comparison(client, catalog):
+    detail = client.get(catalog[0].get_absolute_url())
+    assert detail.status_code == 200
+    assert f'href="{reverse("compare_repositories")}?first=psf/requests"' in detail.content.decode()
+    response = client.get(reverse("compare_repositories"), {"first": "PSF/Requests"})
+    html = response.content.decode()
+    assert 'value="psf/requests"' in html and 'id="id_second"' in html
+    assert 'data-comparison-state="prepared"' in html
+    assert "Your first repository identity is entered" in html
+    assert 'role="alert"' not in html
+    assert "Example comparison" not in html and "Catalog comparison" not in html
+    assert "demonstration pair is not fully available" not in html
+    assert response.headers["X-Robots-Tag"] == "noindex, follow"
+    # An empty form submission is not a contextual handoff.
+    submitted = client.get(reverse("compare_repositories"), {"first": "psf/requests", "second": ""})
+    assert 'data-comparison-state="invalid"' in submitted.content.decode()
+    assert 'role="alert"' in submitted.content.decode()
 
 
 @pytest.mark.django_db
@@ -202,6 +225,8 @@ def test_active_list_source_repository_is_not_a_comparison_candidate(catalog):
         {"first": "<script>alert(1)</script>", "second": "encode/httpx"},
         {"first": "x" * 10_000, "second": "encode/httpx"},
         {"first": ["psf/requests", "other/repo"], "second": "encode/httpx"},
+        {"first": ["psf/requests", "other/repo"]},
+        {"first": "<script>alert(1)</script>"},
     ],
 )
 def test_bad_input_has_neutral_errors_without_catalog_lookup(client, params, monkeypatch):
@@ -235,7 +260,8 @@ def test_tools_are_discoverable_with_actual_edit_date():
     for name in ("tools", "compare_repositories"):
         assert name in sitemap.items()
         assert sitemap.location(name) == reverse(name)
-        assert sitemap.lastmod(name).date().isoformat() == "2026-10-27"
+        expected = "2026-10-28" if name == "compare_repositories" else "2026-10-27"
+        assert sitemap.lastmod(name).date().isoformat() == expected
 
 
 def test_methodology_meets_content_and_accessible_diagram_contract():

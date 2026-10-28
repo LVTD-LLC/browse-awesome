@@ -219,6 +219,9 @@
                   </button>
                 </div>
                 <div class="flex flex-wrap gap-2">
+                  <a href="{% url 'compare_repositories' %}?first={{ repository.full_name|urlencode }}"
+                     data-discovery-action="repository_compare"
+                     class="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-4 text-sm font-bold text-green-700 ring-1 ring-green-300 transition hover:bg-green-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 dark:bg-white/10 dark:text-green-200 dark:ring-green-300/30 dark:hover:bg-green-950/40">Compare this repository</a>
                   {% if user.is_superuser %}
                     <form method="post" action="{% url 'repos:repo_rescan' owner=repository.owner name=repository.name %}">
                       {% csrf_token %}
