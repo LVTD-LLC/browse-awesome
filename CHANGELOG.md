@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-29
+
+- Add list-scoped browser, Telegram and Ollama search starting points to the
+  ChatGPT repository list, with upstream verification prompts and fixed,
+  input-free discovery labels. Keep refined browsing and catalog data unchanged.
+
 ## 2026-10-28
 
 - Carry a repository from its detail page into the comparison tool, ready for a

@@ -75,6 +75,10 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     selfhosted_bookmarks: "selfhosted_bookmarks",
     selfhosted_checklist: "selfhosted_checklist",
     selfhosted_offline_test: "selfhosted_offline_test",
+    chatgpt_browser: "chatgpt_browser",
+    chatgpt_telegram: "chatgpt_telegram",
+    chatgpt_ollama: "chatgpt_ollama",
+    chatgpt_checklist: "chatgpt_checklist",
     coding_agents: "coding_agents",
     coding_multiplexers: "coding_multiplexers",
     coding_harnesses: "coding_harnesses",
@@ -102,7 +106,7 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     assert.equal(captured.event, "discovery_action_clicked");
     assert.deepEqual(JSON.parse(JSON.stringify(captured.properties)), { action: output });
   }
-  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 24);
+  assert.equal(events.filter((e) => e.event === "discovery_action_clicked").length, 28);
   assert.ok(!JSON.stringify(events).includes("secret@example.com"));
   assert.ok(!JSON.stringify(events).includes("private link label"));
 });
