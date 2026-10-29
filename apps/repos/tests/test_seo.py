@@ -194,6 +194,11 @@ def test_selfhosted_bookmark_discovery_uses_current_list_route_and_scoped_search
             "awesome-cli-coding-agents",
             "Find the right part of your coding-agent workflow",
         ),
+        (
+            "taishi-i/awesome-ChatGPT-repositories",
+            "awesome-chatgpt-repositories",
+            "Find a ChatGPT-related project for your task",
+        ),
     ],
 )
 @pytest.mark.parametrize(
@@ -222,7 +227,9 @@ def test_task_discovery_does_not_interrupt_refined_browsing(client, params, sour
     assert 'href="/blog/test-saved-webpages-offline/"' not in response_text(response)
 
 
-@pytest.mark.parametrize("slug", ["awesome-selfhosted", "awesome-cli-coding-agents"])
+@pytest.mark.parametrize(
+    "slug", ["awesome-selfhosted", "awesome-cli-coding-agents", "awesome-chatgpt-repositories"]
+)
 def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
     awesome_list = AwesomeList.objects.create(
         name="Another list",
@@ -236,6 +243,7 @@ def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
     assert response.status_code == 200
     assert "Looking for a bookmark manager?" not in response_text(response)
     assert "Find the right part of your coding-agent workflow" not in response_text(response)
+    assert "Find a ChatGPT-related project for your task" not in response_text(response)
     assert 'href="/blog/test-saved-webpages-offline/"' not in response_text(response)
 
 
@@ -280,6 +288,47 @@ def test_coding_agent_discovery_searches_current_list_not_global_catalog(client)
         assert filtered.status_code == 200
         assert [repo.full_name for repo in filtered.context["page_obj"]] == [expected]
         assert "Find the right part of your coding-agent workflow" not in response_text(filtered)
+
+
+def test_chatgpt_discovery_uses_current_source_route_and_scoped_text_search(client):
+    awesome_list = AwesomeList.objects.create(
+        name="AI tools",
+        slug="chatgpt-current-slug",
+        source_url="https://github.com/taishi-i/awesome-ChatGPT-repositories",
+        repo_full_name="taishi-i/awesome-ChatGPT-repositories",
+    )
+    for name, description, in_list in (
+        ("browser-tool", "A browser extension", True),
+        ("telegram-tool", "A Telegram integration", True),
+        ("ollama-tool", "An Ollama interface", True),
+        ("outside", "A browser and Telegram tool for Ollama", False),
+    ):
+        repository = Repository.objects.create(
+            full_name=f"example/{name}",
+            owner="example",
+            name=name,
+            url=f"https://github.com/example/{name}",
+            description=description,
+        )
+        if in_list:
+            AwesomeListItem.objects.create(awesome_list=awesome_list, repository=repository)
+
+    path = awesome_list.get_absolute_url()
+    response = client.get(path)
+    content = response_text(response)
+    assert response.status_code == 200
+    assert "Matches are not verified categories" in content
+    assert "local-only operation, or free model access" in content
+    assert 'data-discovery-action="chatgpt_checklist"' in content
+    for query in ("browser", "telegram", "ollama"):
+        assert f'href="{path}?q={query}"' in content
+        assert f'data-discovery-action="chatgpt_{query}"' in content
+        filtered = client.get(path, {"q": query})
+        assert filtered.status_code == 200
+        assert [repo.full_name for repo in filtered.context["page_obj"]] == [
+            f"example/{query}-tool"
+        ]
+        assert "Find a ChatGPT-related project for your task" not in response_text(filtered)
 
 
 @override_settings(SITE_URL="https://testserver")

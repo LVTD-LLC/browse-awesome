@@ -1,0 +1,37 @@
+<section aria-labelledby="chatgpt-discovery-heading"
+         class="mt-8 rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-gray-900">
+    <h2 id="chatgpt-discovery-heading"
+        class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">Find a ChatGPT-related project for your task</h2>
+    <p class="mt-3 max-w-3xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+        This list spans more than chat interfaces. Start with a text search inside this list,
+        then check what each project actually supports. Matches are not verified categories,
+        compatibility checks, or recommendations.
+    </p>
+    <div class="mt-4 grid gap-3 md:grid-cols-3">
+        <a href="{{ awesome_list.get_absolute_url }}?q=browser"
+           data-discovery-action="chatgpt_browser"
+           class="block rounded-xl border border-gray-300 bg-white p-4 text-sm transition hover:border-green-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-950 dark:focus-visible:ring-offset-gray-950">
+            <span class="block font-bold text-gray-950 dark:text-white">Search browser-related projects →</span>
+            <span class="mt-2 block leading-6 text-gray-600 dark:text-gray-300">Explore extensions and browser automation. Check the supported browser, requested permissions, and where page content is sent.</span>
+        </a>
+        <a href="{{ awesome_list.get_absolute_url }}?q=telegram"
+           data-discovery-action="chatgpt_telegram"
+           class="block rounded-xl border border-gray-300 bg-white p-4 text-sm transition hover:border-green-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-950 dark:focus-visible:ring-offset-gray-950">
+            <span class="block font-bold text-gray-950 dark:text-white">Search Telegram-related projects →</span>
+            <span class="mt-2 block leading-6 text-gray-600 dark:text-gray-300">Find messaging-related candidates. Verify bot setup, who can send requests, and which model provider receives messages.</span>
+        </a>
+        <a href="{{ awesome_list.get_absolute_url }}?q=ollama"
+           data-discovery-action="chatgpt_ollama"
+           class="block rounded-xl border border-gray-300 bg-white p-4 text-sm transition hover:border-green-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-950 dark:focus-visible:ring-offset-gray-950">
+            <span class="block font-bold text-gray-950 dark:text-white">Search Ollama-related projects →</span>
+            <span class="mt-2 block leading-6 text-gray-600 dark:text-gray-300">Explore tools mentioning Ollama. Check endpoint configuration, model requirements, and whether the workflow also calls hosted services.</span>
+        </a>
+    </div>
+    <p class="mt-4 text-sm leading-6 text-gray-600 dark:text-gray-300">
+        Searching does not install a project or establish ChatGPT compatibility, local-only operation, or free model access.
+        Use the <a href="{% url 'blog:post_detail' slug='how-to-shortlist-github-repositories' %}"
+    data-discovery-action="chatgpt_checklist"
+    class="font-semibold text-green-700 underline underline-offset-4 dark:text-green-300">repository evaluation checklist</a>
+        before trying a project.
+    </p>
+</section>
