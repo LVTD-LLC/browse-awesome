@@ -266,7 +266,8 @@ class RepositoryNewsletterIssueSitemap(ConfiguredDomainSitemap):
 
 sitemaps = {
     "static": StaticViewSitemap,
-    "repositories": RepositorySitemap,
+    # Metadata-only detail pages remain usable in the catalog, not search landings.
+    # Keep RepositorySitemap available for a future deliberate, selective reintroduction.
     "awesome_lists": AwesomeListSitemap,
     "blog_posts": BlogPostSitemap,
     "repository_updates": RepositoryUpdatesSitemap,
