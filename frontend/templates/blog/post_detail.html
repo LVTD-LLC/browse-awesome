@@ -58,7 +58,10 @@
         {% if post.slug == "find-django-github-projects" %}
             {% include "blog/includes/django_dependency_process.html" %}
         {% endif %}
-        <div class="prose prose-gray mt-8 max-w-none dark:prose-invert{% if post.slug == 'find-django-github-projects' %} [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto{% endif %}">
+        {% if post.slug == "filter-github-repositories-by-license" %}
+            {% include "blog/includes/license_evidence_process.html" %}
+        {% endif %}
+        <div class="prose prose-gray mt-8 max-w-none dark:prose-invert{% if post.slug == 'find-django-github-projects' or post.slug == 'filter-github-repositories-by-license' %} [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto{% endif %}">
             {{ post.html|safe }}
         </div>
         {% if post.tags %}

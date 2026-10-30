@@ -15,6 +15,7 @@ from apps.blog.services import (
     django_dependency_schema,
     get_blog_post,
     json_ld,
+    license_discovery_schema,
     list_blog_posts,
     mcp_discovery_schema,
     repository_shortlist_schema,
@@ -59,6 +60,8 @@ def post_detail(request, slug):
                 if post.slug == "test-saved-webpages-offline"
                 else json_ld(django_dependency_schema(post))
                 if post.slug == "find-django-github-projects"
+                else json_ld(license_discovery_schema(post))
+                if post.slug == "filter-github-repositories-by-license"
                 else json_ld(blog_breadcrumb_schema(post))
             ),
         },

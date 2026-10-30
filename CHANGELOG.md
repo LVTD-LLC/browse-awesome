@@ -2,6 +2,12 @@
 
 ## 2026-10-30
 
+- Add a worked license-label discovery guide: recover an overlooked dual-licensed
+  ripgrep candidate, inspect pinned upstream files, and keep evidence separate
+  from permission or compatibility decisions. Link it from the homepage and
+  repository-shortlisting guide; retain repository-detail noindex boundaries.
+
+
 - Remove GitHub repository detail pages from XML sitemaps and mark their HTML and
   HTTP responses `noindex, follow`. Keep the pages accessible, preserve crawling
   so search engines can process removal, and refresh sitemap cache namespaces.

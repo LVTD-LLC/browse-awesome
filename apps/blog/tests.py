@@ -380,7 +380,7 @@ def test_published_repository_shortlist_guide_renders_body_and_structured_data(c
     published_at = datetime.fromisoformat("2026-10-10T01:20:00+03:00")
     assert datetime.fromisoformat(article["datePublished"]) == published_at
     assert datetime.fromisoformat(article["dateModified"]) == datetime.fromisoformat(
-        "2026-10-25T22:20:08+00:00"
+        "2026-10-30T22:20:33+00:00"
     )
     assert article["articleBody"]
     graph = next(value["@graph"] for value in schemas if "@graph" in value)
