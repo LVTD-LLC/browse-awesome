@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-30
+
+- Remove GitHub repository detail pages from XML sitemaps and mark their HTML and
+  HTTP responses `noindex, follow`. Keep the pages accessible, preserve crawling
+  so search engines can process removal, and refresh sitemap cache namespaces.
+  Editorial guides, curated lists, tools and published update pages are unchanged.
+
 ## 2026-10-29
 
 - Add list-scoped browser, Telegram and Ollama search starting points to the

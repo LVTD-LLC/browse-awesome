@@ -1137,6 +1137,12 @@ class RepositoryDetailView(DetailView):
     template_name = "repos/detail.html"
     context_object_name = "repository"
 
+    def render_to_response(self, context, **response_kwargs):
+        response = super().render_to_response(context, **response_kwargs)
+        # Keep catalog details available to visitors and crawlers, but out of Search.
+        response.headers["X-Robots-Tag"] = "noindex, follow"
+        return response
+
     def get_object(self, queryset=None):
         full_name = f"{self.kwargs['owner']}/{self.kwargs['name']}"
         queryset = Repository.objects.prefetch_related("awesome_items__awesome_list")

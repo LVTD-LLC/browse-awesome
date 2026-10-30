@@ -68,7 +68,7 @@ urlpatterns += [
     path("", include("apps.core.urls")),
     path(
         "sitemap.xml",
-        cache_page(60 * 60)(configured_sitemap_index),
+        cache_page(60 * 60, key_prefix="repository-details-noindex-v1")(configured_sitemap_index),
         {
             "sitemaps": sitemaps,
             "sitemap_url_name": "sitemap_section",
@@ -77,7 +77,7 @@ urlpatterns += [
     ),
     path(
         "sitemap-<section>.xml",
-        cache_page(60 * 60)(sitemap),
+        cache_page(60 * 60, key_prefix="repository-details-noindex-v1")(sitemap),
         {"sitemaps": sitemaps},
         name="sitemap_section",
     ),

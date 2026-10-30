@@ -61,6 +61,8 @@ def test_repository_detail_has_page_specific_metadata_and_schema(client):
         in content
     )
     assert '<link rel="canonical" href="https://testserver/repos/django/django/" />' in content
+    assert '<meta name="robots" content="noindex, follow" />' in content
+    assert response.headers["X-Robots-Tag"] == "noindex, follow"
     assert '<meta property="og:type" content="article" />' in content
     assert (
         '<meta property="og:image" '
@@ -490,12 +492,13 @@ def test_sitemap_index_links_paginated_sections(client):
     content = response_text(response)
     assert "<sitemapindex" in content
     assert "<loc>https://awesome.example/sitemap-static.xml</loc>" in content
-    assert "<loc>https://awesome.example/sitemap-repositories.xml</loc>" in content
+    assert "sitemap-repositories.xml" not in content
     assert "<loc>https://awesome.example/sitemap-awesome_lists.xml</loc>" in content
     assert "<loc>https://awesome.example/repos/django/django/</loc>" not in content
 
     static_content = response_text(client.get("/sitemap-static.xml"))
-    repository_content = response_text(client.get("/sitemap-repositories.xml"))
+    assert client.get("/sitemap-repositories.xml").status_code == 404
+    assert client.get("/sitemap-repositories.xml?p=2").status_code == 404
     list_content = response_text(client.get("/sitemap-awesome_lists.xml"))
     updates_content = response_text(client.get("/sitemap-repository_updates.xml"))
     issues_content = response_text(client.get("/sitemap-repository_update_issues.xml"))
@@ -503,9 +506,6 @@ def test_sitemap_index_links_paginated_sections(client):
     assert "<loc>https://awesome.example/</loc>" in static_content
     assert "<loc>https://awesome.example/updates/</loc>" in static_content
     assert "<loc>https://awesome.example/lists/</loc>" in static_content
-    assert "<loc>https://awesome.example/repos/django/django/</loc>" in repository_content
-    assert "<loc>https://awesome.example/repos/django/channels/</loc>" not in repository_content
-    assert "<loc>https://awesome.example/repos/django/disabled/</loc>" not in repository_content
     assert "<loc>https://awesome.example/lists/awesome-django/</loc>" in list_content
     assert "<loc>https://awesome.example/repos/django/django/updates/</loc>" in updates_content
     assert f"<loc>https://awesome.example{issue.get_absolute_url()}</loc>" in issues_content
