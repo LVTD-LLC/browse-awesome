@@ -390,6 +390,23 @@ def django_dependency_schema(post: BlogPost) -> dict:
     }
 
 
+def license_discovery_schema(post: BlogPost) -> dict:
+    schema = repository_shortlist_schema(post)
+    schema["@graph"][0]["step"] = [
+        {"@type": "HowToStep", "position": position, "name": name}
+        for position, name in enumerate(
+            (
+                "Filter GitHub repositories by a stored license label",
+                "Remove the license filter before ruling out a candidate",
+                "Read the upstream files at a fixed revision",
+                "Keep a license-evidence note, not a pass badge",
+            ),
+            start=1,
+        )
+    ]
+    return schema
+
+
 def mcp_discovery_schema(post: BlogPost) -> dict:
     schema = repository_shortlist_schema(post)
     schema["@graph"][0]["step"] = [
