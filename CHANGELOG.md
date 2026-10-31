@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-31
+
+- Explain license-label exclusions at empty search results, with a one-click
+  recovery that removes only the label while retaining the task, other filters,
+  and catalog scope. Link the worked evidence guide from the filter and recovery
+  state; keep private-star actions out of discovery click tracking.
+
 ## 2026-10-30
 
 - Add a worked license-label discovery guide: recover an overlooked dual-licensed
