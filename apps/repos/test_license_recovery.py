@@ -75,7 +75,7 @@ def test_license_recovery_keeps_scope_and_other_requirements(auth_client, profil
     else:
         assert 'data-discovery-action="empty_remove_license"' in content
     recovered = auth_client.get(recovery)
-    assert list(recovered.context["repositories"]) == [repo]
+    assert list(recovered.context["page_obj"].object_list) == [repo]
     assert "Remove only license label" not in recovered.content.decode()
     assert not recovered.context["search_without_license_url"]
     repo.refresh_from_db()
