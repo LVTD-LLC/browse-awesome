@@ -43,6 +43,9 @@
     ["empty_keep_search", "empty_keep_search"],
     ["empty_reset_filters", "empty_reset_filters"],
     ["empty_browse_lists", "empty_browse_lists"],
+    ["empty_remove_license", "empty_remove_license"],
+    ["empty_license_guide", "empty_license_guide"],
+    ["filter_license_guide", "filter_license_guide"],
     ["repository_compare", "repository_compare"],
   ]);
   const catalogFilters = new Set([

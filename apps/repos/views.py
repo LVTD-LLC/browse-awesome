@@ -817,6 +817,11 @@ def repository_filter_context(
         "show_search_mode": show_search_mode,
         "search_action_url": search_url,
         "search_reset_url": reset_url,
+        "search_without_license_url": (
+            f"{search_url}?{repository_filter_remove_querystring(params, 'license')}"
+            if (params.get("license") or "").strip()
+            else ""
+        ),
         "search_relaxed_url": (
             f"{search_url}?{search_only_querystring}"
             if (params.get("q") or "").strip()
