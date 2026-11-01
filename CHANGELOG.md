@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-01
+
+- Add a same-task Click/Typer comparison starting point to Awesome Python,
+  distinguishing CLI libraries from ready-to-run apps. Show it only when both
+  public list members are available and the visitor has not refined the list;
+  use source documentation and fixed, input-free discovery labels.
+
 ## 2026-10-31
 
 - Explain license-label exclusions at empty search results, with a one-click

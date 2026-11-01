@@ -27,6 +27,7 @@ from apps.repos.cache import (
 )
 from apps.repos.discovery import (
     awesome_list_starting_points,
+    python_cli_comparison,
     repository_file_starting_points,
     repository_stack_starting_points,
 )
@@ -1424,6 +1425,15 @@ class AwesomeListDetailView(DetailView):
             self.object.repo_full_name == "taishi-i/awesome-ChatGPT-repositories"
             and not repository_filters_applied(self.request.GET, include_sort=True)
             and self.request.GET.get("page", "1") in ("", "1")
+        )
+        context["python_cli_comparison"] = (
+            python_cli_comparison(all_list_repos)
+            if self.object.repo_full_name == "vinta/awesome-python"
+            and not self.object.is_archived
+            and not self.object.is_disabled
+            and not repository_filters_applied(self.request.GET, include_sort=True)
+            and self.request.GET.get("page", "1") in ("", "1")
+            else None
         )
         context["hide_side_ad_rails"] = True
         return context

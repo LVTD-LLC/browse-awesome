@@ -230,7 +230,13 @@ def test_task_discovery_does_not_interrupt_refined_browsing(client, params, sour
 
 
 @pytest.mark.parametrize(
-    "slug", ["awesome-selfhosted", "awesome-cli-coding-agents", "awesome-chatgpt-repositories"]
+    "slug",
+    [
+        "awesome-selfhosted",
+        "awesome-cli-coding-agents",
+        "awesome-chatgpt-repositories",
+        "awesome-python",
+    ],
 )
 def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
     awesome_list = AwesomeList.objects.create(
@@ -239,6 +245,13 @@ def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
         source_url="https://github.com/example/another-list",
         repo_full_name="example/another-list",
     )
+    if slug == "awesome-python":
+        for identity in ("pallets/click", "fastapi/typer"):
+            owner, name = identity.split("/")
+            repository = Repository.objects.create(
+                full_name=identity, owner=owner, name=name, url=f"https://github.com/{identity}"
+            )
+            AwesomeListItem.objects.create(awesome_list=awesome_list, repository=repository)
 
     response = client.get(awesome_list.get_absolute_url())
 
@@ -246,6 +259,7 @@ def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
     assert "Looking for a bookmark manager?" not in response_text(response)
     assert "Find the right part of your coding-agent workflow" not in response_text(response)
     assert "Find a ChatGPT-related project for your task" not in response_text(response)
+    assert "Building a Python command-line app?" not in response_text(response)
     assert 'href="/blog/test-saved-webpages-offline/"' not in response_text(response)
 
 
@@ -331,6 +345,51 @@ def test_chatgpt_discovery_uses_current_source_route_and_scoped_text_search(clie
             f"example/{query}-tool"
         ]
         assert "Find a ChatGPT-related project for your task" not in response_text(filtered)
+
+
+def test_python_cli_pair_is_same_list_available_and_does_not_interrupt_search(client):
+    awesome_list = AwesomeList.objects.create(
+        name="Python libraries",
+        slug="current-python-route",
+        source_url="https://github.com/vinta/awesome-python",
+        repo_full_name="vinta/awesome-python",
+    )
+    repositories = []
+    for identity in ("pallets/click", "fastapi/typer"):
+        owner, name = identity.split("/")
+        repository = Repository.objects.create(
+            full_name=identity, owner=owner, name=name, url=f"https://github.com/{identity}"
+        )
+        AwesomeListItem.objects.create(awesome_list=awesome_list, repository=repository)
+        repositories.append(repository)
+
+    path = awesome_list.get_absolute_url()
+    response = client.get(path)
+    assert response.status_code == 200
+    content = response_text(response)
+    assert "Building a Python command-line app?" in content
+    assert "not a ranking or a compatibility test" in content
+    comparison_url = (
+        reverse("compare_repositories") + "?first=pallets%2Fclick&second=fastapi%2Ftyper"
+    )
+    assert f'href="{comparison_url.replace("&", "&amp;")}"' in content
+    compared = client.get(comparison_url)
+    assert compared.status_code == 200
+    assert compared.context["comparison_state"] == "compared"
+    for repository in repositories:
+        assert f'href="{repository.get_absolute_url()}"' in content
+    for params in ({"q": "click"}, {"sort": "recent"}, {"mode": "semantic"}, {"page": "2"}):
+        assert "Building a Python command-line app?" not in response_text(client.get(path, params))
+
+    typer = repositories[1]
+    for field in ("is_disabled", "is_archived", "is_awesome_list_candidate"):
+        setattr(typer, field, True)
+        typer.save(update_fields=[field])
+        assert "Building a Python command-line app?" not in response_text(client.get(path))
+        setattr(typer, field, False)
+        typer.save(update_fields=[field])
+    AwesomeListItem.objects.filter(awesome_list=awesome_list, repository=typer).delete()
+    assert "Building a Python command-line app?" not in response_text(client.get(path))
 
 
 @override_settings(SITE_URL="https://testserver")
