@@ -177,6 +177,9 @@
         {% if show_chatgpt_discovery %}
             {% include "repos/_chatgpt_discovery.html" %}
         {% endif %}
+        {% if python_cli_comparison %}
+            {% include "repos/_python_cli_comparison.html" %}
+        {% endif %}
         {% if show_coding_agent_discovery %}
             {% include "repos/_coding_agent_discovery.html" %}
         {% endif %}

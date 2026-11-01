@@ -1,0 +1,46 @@
+<section aria-labelledby="python-cli-heading"
+         class="mt-8 rounded-2xl border border-gray-200 bg-gray-50 p-5 dark:border-gray-800 dark:bg-gray-900">
+    <h2 id="python-cli-heading"
+        class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">Building a Python command-line app?</h2>
+    <p class="mt-3 max-w-3xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+        Choose a library for building commands, not just an application you can run in a terminal.
+        Click and Typer are two candidates from this list for that task. Compare recorded
+        repository metrics, then try your own command structure with the upstream documentation.
+        This is a starting pair, not a ranking or a compatibility test.
+    </p>
+    <div class="mt-4 grid gap-3 md:grid-cols-2">
+        <div class="rounded-xl border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-gray-950">
+            <a href="{{ python_cli_comparison.click.get_absolute_url }}"
+               data-discovery-action="python_cli_click"
+               class="touch-inline-link font-bold text-green-700 underline underline-offset-4 dark:text-green-300">Inspect Click →</a>
+            <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                A composable command-line interface toolkit for declaring commands and options.
+            </p>
+            <a href="https://click.palletsprojects.com/en/stable/"
+               class="touch-inline-link mt-2 text-sm text-green-700 underline underline-offset-4 dark:text-green-300">Click documentation</a>
+        </div>
+        <div class="rounded-xl border border-gray-300 bg-white p-4 dark:border-gray-700 dark:bg-gray-950">
+            <a href="{{ python_cli_comparison.typer.get_absolute_url }}"
+               data-discovery-action="python_cli_typer"
+               class="touch-inline-link font-bold text-green-700 underline underline-offset-4 dark:text-green-300">Inspect Typer →</a>
+            <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                A library for building CLIs using Python type hints.
+            </p>
+            <a href="https://typer.tiangolo.com/"
+               class="touch-inline-link mt-2 text-sm text-green-700 underline underline-offset-4 dark:text-green-300">Typer documentation</a>
+        </div>
+    </div>
+    <p class="mt-4 max-w-3xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+        Try the same command in both: one required argument, an optional flag, a subcommand,
+        and an invalid-input case. Compare the implementation, generated help, and errors.
+        Check the supported Python versions and current license terms upstream before choosing.
+    </p>
+    <a href="{{ python_cli_comparison.url }}"
+       data-discovery-action="python_cli_compare"
+       class="mt-4 inline-flex min-h-12 items-center rounded-xl bg-green-700 px-5 text-sm font-semibold text-white hover:bg-green-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">Compare Click and Typer →</a>
+    <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
+        Looking for ready-to-run apps instead? Browse the
+        <a href="{{ awesome_list.source_url }}#cli-tools"
+           class="touch-inline-link text-green-700 underline underline-offset-4 dark:text-green-300">upstream CLI Tools section</a>.
+    </p>
+</section>

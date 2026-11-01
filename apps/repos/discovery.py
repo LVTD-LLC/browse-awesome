@@ -11,6 +11,25 @@ from apps.repos.services import REPOSITORY_BASENAME_FILE_FILTERS, REPOSITORY_HAS
 REPOSITORY_FILE_DISCOVERY_UPDATED_AT = datetime(2026, 10, 19, 22, 20, tzinfo=UTC)
 
 
+def python_cli_comparison(repositories):
+    """Offer a same-task pair only while both public list members are available."""
+    identities = ("pallets/click", "fastapi/typer")
+    available = {
+        repository.full_name: repository
+        for repository in repositories.filter(
+            full_name__in=identities, is_archived=False, is_disabled=False
+        )
+    }
+    if not all(identity in available for identity in identities):
+        return None
+    return {
+        "click": available[identities[0]],
+        "typer": available[identities[1]],
+        "url": f"{reverse('compare_repositories')}?"
+        + urlencode({"first": identities[0], "second": identities[1]}),
+    }
+
+
 def repository_discovery_files(signals):
     """Use the catalog's exact-path and basename matching rules."""
     if not isinstance(signals, list):
