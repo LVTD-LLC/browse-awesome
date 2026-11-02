@@ -52,7 +52,7 @@
     ["repository_compare", "repository_compare"],
   ]);
   const catalogFilters = new Set([
-    "mode", "list", "language", "topic", "generated_tag", "framework", "stack",
+    "mode", "list", "also_in", "language", "topic", "generated_tag", "framework", "stack",
     "package_manager", "license", "has_file", "min_stars", "updated_days", "unmaintained_days",
     "min_age_years", "min_velocity_percent", "min_star_growth_percent",
     "min_liability_percent", "archived", "ai_development", "sort_direction", "sort", "page",
