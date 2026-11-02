@@ -21,6 +21,7 @@ def test_second_list_intersects_public_search_and_retains_other_requirements(cli
     repos = [
         Repository.objects.create(
             full_name=f"example/{name}",
+            url=f"https://github.com/example/{name}",
             owner="example",
             name=name,
             language=language,
