@@ -50,6 +50,7 @@
                                name="list"
                                value="{{ request.GET.list }}"
                                list="{{ filter_id_prefix }}-list-options"
+                               aria-describedby="{{ filter_id_prefix }}-list-help"
                                placeholder="Any list"
                                autocomplete="off"
                                class="{{ control_class }}" />
@@ -61,6 +62,9 @@
                                 </option>
                             {% endfor %}
                         </datalist>
+                        <p id="{{ filter_id_prefix }}-list-help" class="mt-2 text-xs leading-5 text-gray-600 dark:text-gray-400">
+                            To find shared repositories, choose “Also in awesome list” under More filters.
+                        </p>
                     </div>
                 {% endif %}
                 <div>
@@ -180,6 +184,32 @@
                 <div class="grid gap-6 xl:grid-cols-4">
                     <fieldset class="space-y-4">
                         <legend class="text-sm font-bold text-gray-950 dark:text-white">Ecosystem</legend>
+                        {% if show_list_filter %}
+                            <div>
+                                <label for="{{ filter_id_prefix }}-also-in" class="{{ label_class }}">Also in awesome list</label>
+                                <input id="{{ filter_id_prefix }}-also-in"
+                                       type="text"
+                                       name="also_in"
+                                       value="{{ request.GET.also_in }}"
+                                       list="{{ filter_id_prefix }}-overlap-options"
+                                       maxlength="255"
+                                       placeholder="Choose an additional list slug"
+                                       autocomplete="off"
+                                       aria-describedby="{{ filter_id_prefix }}-overlap-help"
+                                       class="{{ control_class }}" />
+                                <datalist id="{{ filter_id_prefix }}-overlap-options">
+                                    {% for awesome_list in awesome_lists %}
+                                        {% if not awesome_list.is_disabled and not awesome_list.is_archived %}
+                                            <option value="{{ awesome_list.slug }}" label="{{ awesome_list.name }} — {{ awesome_list.repo_full_name }}"></option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </datalist>
+                                <p id="{{ filter_id_prefix }}-overlap-help"
+                                   class="mt-2 text-xs leading-5 text-gray-600 dark:text-gray-400">
+                                    Use the exact slug from these suggestions; an unavailable slug returns no matches. With Awesome list above, results must belong to both lists in this catalog. Shared listing is not proof of independent review or project quality; check each upstream README.
+                                </p>
+                            </div>
+                        {% endif %}
                         <div>
                             <label for="{{ filter_id_prefix }}-topic" class="{{ label_class }}">GitHub topic</label>
                             <input id="{{ filter_id_prefix }}-topic"

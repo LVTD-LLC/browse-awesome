@@ -169,10 +169,10 @@ test("catalog parameter names and sort values are allowlisted on load and HTMX n
     assert.equal(events.at(-1).properties.sort, "scanned");
     assert.equal(events.at(-1).properties.page, 1);
   }
-  location.href = "https://browseawesome.com/repos/?sort=stars&page=2&topic=secret@example.com&license=private@example.com";
+  location.href = "https://browseawesome.com/repos/?sort=stars&page=2&topic=secret@example.com&license=private@example.com&also_in=private@example.com";
   handlers["htmx:historyRestore"]();
   assert.equal(events.at(-1).properties.page, 2);
   assert.equal(events.at(-1).properties.sort, "stars");
-  assert.deepEqual(Array.from(events.at(-1).properties.filter_names), ["license", "page", "sort", "topic"]);
+  assert.deepEqual(Array.from(events.at(-1).properties.filter_names), ["also_in", "license", "page", "sort", "topic"]);
   assert.ok(!JSON.stringify(events).includes("@example.com"));
 });

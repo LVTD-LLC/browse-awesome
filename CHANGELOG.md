@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-02
+
+- Add an optional second awesome-list membership filter to repository search so developers can inspect projects shared by two lists, while retaining other requirements and distinguishing stored membership from independent endorsement.
+
 ## 2026-11-01
 
 - Add a same-task Click/Typer comparison starting point to Awesome Python,

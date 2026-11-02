@@ -215,6 +215,7 @@ REPOSITORY_FILTER_PARAM_NAMES = (
     "q",
     "mode",
     "list",
+    "also_in",
     "language",
     "topic",
     "generated_tag",
@@ -235,6 +236,7 @@ REPOSITORY_FILTER_PARAM_NAMES = (
     "sort_direction",
 )
 REPOSITORY_ADVANCED_FILTER_PARAM_NAMES = (
+    "also_in",
     "topic",
     "generated_tag",
     "framework",
@@ -271,6 +273,7 @@ REPOSITORY_FILTER_LABELS = {
     "q": "Search",
     "mode": "Mode",
     "list": "List",
+    "also_in": "Also in list",
     "language": "Language",
     "topic": "Topic",
     "generated_tag": "Tag",
@@ -741,6 +744,7 @@ def repository_filter_context(
     params = repository_search_params(request)
     if not show_list_filter:
         params.pop("list", None)
+        params.pop("also_in", None)
     if awesome_lists is None and show_list_filter:
         awesome_lists = (
             AwesomeList.objects.filter(is_active=True)

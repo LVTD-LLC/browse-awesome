@@ -2447,6 +2447,25 @@ def _apply_repository_keyword_search(qs, q: str):
     )
 
 
+def _apply_repository_overlap_filter(qs, params):
+    """Require a second exact, public list membership without reusing join aliases."""
+    if hasattr(params, "getlist") and len(params.getlist("also_in")) > 1:
+        return qs.none()
+    slug = (params.get("also_in") or "").strip()
+    if not slug:
+        return qs
+    if len(slug) > 255 or re.fullmatch(r"[-a-zA-Z0-9_]+", slug, flags=re.ASCII) is None:
+        return qs.none()
+    membership = AwesomeListItem.objects.filter(
+        repository_id=models.OuterRef("pk"),
+        awesome_list__slug=slug,
+        awesome_list__is_active=True,
+        awesome_list__is_disabled=False,
+        awesome_list__is_archived=False,
+    )
+    return qs.filter(models.Exists(membership))
+
+
 def _apply_repository_taxonomy_filters(qs, params, *, allow_list_filter: bool):
     language = (params.get("language") or "").strip()
     if language:
@@ -2462,6 +2481,9 @@ def _apply_repository_taxonomy_filters(qs, params, *, allow_list_filter: bool):
             models.Q(awesome_items__awesome_list__slug=list_value)
             | models.Q(awesome_items__awesome_list__name__iexact=list_value)
         ).distinct()
+
+    if allow_list_filter:
+        qs = _apply_repository_overlap_filter(qs, params)
 
     topic = normalize_repository_tag(params.get("topic") or "")
     if topic:
