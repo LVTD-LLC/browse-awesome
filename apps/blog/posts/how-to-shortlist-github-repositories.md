@@ -8,7 +8,7 @@ description: >-
   checks to choose a small trial, not to declare a repository production-ready.
 meta_description: Find GitHub repositories through awesome lists, understand activity filters, and compare candidates with a practical evidence worksheet.
 published_at: 2026-10-10T01:20:00+03:00
-updated_at: 2026-10-30T22:20:33+00:00
+updated_at: 2026-11-04T22:19:23+00:00
 author: Browse Awesome Team
 author_type: Organization
 image: /static/brand/awesome-repos-social.png
@@ -52,6 +52,18 @@ The interface calls the archive choice **Active only**. In this filter, that mea
 
 If the result set is irrelevant, sharpen the task term or return to the topic list. If it is too narrow, remove one filter at a time. Avoid setting a minimum growth percentage at the outset: repositories without a usable measurement baseline can disappear from that view. Keep two or three plausible candidates with a one-line reason for each; the number is a manageable trial size, not a quality threshold.
 
+### Worked example: find a repository in two awesome lists
+
+Suppose you want to investigate a self-managed application platform through both a container-focused list and a systems-administration list. Start with [Awesome Docker](/lists/awesome-docker/) and [Awesome Sysadmin](/lists/awesome-sysadmin/) to check their identities and source READMEs. This is a discovery exercise, not a comparison of deployment platforms.
+
+Open the [Docker + Sysadmin shared-repository search](/repos/?list=awesome-docker&also_in=awesome-sysadmin). In **Awesome list**, the first requirement is `awesome-docker`. Under **More filters**, **Also in awesome list** adds `awesome-sysadmin`. These requirements are combined with **AND**: a result must have both stored memberships, as well as satisfy any other filters you set. This does not merge the lists into one larger set.
+
+To reproduce one candidate check, [narrow the results to “dokku”](/repos/?list=awesome-docker&also_in=awesome-sysadmin&q=dokku). Browse Awesome returned `dokku/dokku` in this view when checked on November 4, 2026. That result establishes a stored membership match, not suitability for your application. The [pinned Docker README entry](https://github.com/veggiemonk/awesome-docker/blob/82de5d3f98c325e047697ab92b46f31581b44e2b/README.md) links directly to that GitHub repository; the [pinned Sysadmin README entry](https://github.com/awesome-foss/awesome-sysadmin/blob/ed63cb4d7d63dc8ea84bbd6a1770683d3d3e4f64/README.md) links to Dokku's website and identifies the same source repository. Search each README for “Dokku” to repeat the identity check.
+
+If the view is empty later, remove the text term first while retaining both lists. Then clear **Also in awesome list** to inspect the first list alone. An empty intersection says that the current catalog and requirements returned no match; it does not establish that no suitable project exists. Stored membership can lag the upstream README, and two entries do not prove independent reviews.
+
+Carry the candidate into the worksheet below: verify its supported host environment, application build path, persistent-data handling and recovery procedure in the documentation for the version you would test. Mark each requirement as evidenced, unresolved or failed. Neither README inclusion nor this walkthrough establishes those capabilities. No Dokku installation or deployment trial was performed for this example.
+
 ## 3. Read the signals
 
 Browse Awesome stores GitHub metadata and historical snapshots. Its display is a catalog observation, not a live audit of every result. Use the signals to decide what to inspect next.
@@ -70,7 +82,7 @@ Growth percentages need particular care. The repository filters' star- and commi
 
 For a worked star-count example and the limits of these comparisons, see [GitHub star growth: read the baseline first](/blog/github-star-growth/).
 
-These descriptions follow the [repository search implementation](https://github.com/LVTD-LLC/awesome/blob/d54bef89093fe25fa1b60c07c4954bb12d1e1625/apps/repos/services.py), checked on October 9, 2026. They describe this version of the catalog, not a promise that every upstream repository was refreshed today.
+The signal descriptions in this section follow the [repository search implementation](https://github.com/LVTD-LLC/awesome/blob/d54bef89093fe25fa1b60c07c4954bb12d1e1625/apps/repos/services.py), checked on October 9, 2026. They describe this version of the catalog, not a promise that every upstream repository was refreshed today.
 
 Put two exact identities in the [GitHub repository comparison tool](/tools/compare-github-repositories/) to read their stored metadata, sync dates and awesome-list sources side by side. It does not assign a winner or replace the upstream checks below.
 

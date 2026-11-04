@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-04
+
+- Extend the repository shortlisting guide with a reproducible Docker/Sysadmin cross-list search, pinned source-identity checks, and a path from stored membership to upstream requirements verification.
+
 ## 2026-11-02
 
 - Add an optional second awesome-list membership filter to repository search so developers can inspect projects shared by two lists, while retaining other requirements and distinguishing stored membership from independent endorsement.
