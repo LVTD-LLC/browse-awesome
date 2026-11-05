@@ -50,6 +50,8 @@
     ["empty_license_guide", "empty_license_guide"],
     ["filter_license_guide", "filter_license_guide"],
     ["repository_compare", "repository_compare"],
+    ["comparison_missing_edit", "comparison_missing_edit"],
+    ["comparison_missing_search", "comparison_missing_search"],
   ]);
   const catalogFilters = new Set([
     "mode", "list", "also_in", "language", "topic", "generated_tag", "framework", "stack",

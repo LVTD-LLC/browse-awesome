@@ -15,6 +15,17 @@
             <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
                 Not observed in the public repository catalog. No metadata was fetched. This does not establish whether the upstream repository exists, is public, or meets your requirements.
             </p>
+            <p class="mt-3 text-sm leading-6 text-gray-600 dark:text-gray-300">
+                Check the owner and repository spelling, or find another catalog candidate for the same task. Editing this identity keeps your other choice in the form.
+            </p>
+            <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+                <a href="{% if forloop.first %}#id_first{% else %}#id_second{% endif %}"
+                   data-discovery-action="comparison_missing_edit"
+                   class="inline-block min-h-11 py-2 text-sm font-semibold text-green-700 underline dark:text-green-400">Edit this identity</a>
+                <a href="{% url 'repos:search' %}"
+                   data-discovery-action="comparison_missing_search"
+                   class="inline-block min-h-11 py-2 text-sm font-semibold underline">Find another catalog candidate</a>
+            </div>
         {% endif %}
     </div>
     {% if column.repository %}
