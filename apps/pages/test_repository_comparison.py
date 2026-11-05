@@ -127,6 +127,9 @@ def test_missing_example_is_not_fabricated_and_valid_missing_stays_unobserved(cl
     )
     html = result.content.decode()
     assert html.count("Not observed in the public repository catalog.") == 2
+    assert 'href="#id_first"' in html and 'href="#id_second"' in html
+    assert html.count('data-discovery-action="comparison_missing_search"') == 2
+    assert 'value="missing/one"' in html and 'value="missing/two"' in html
     assert 'data-comparison-state="unobserved"' in html
     assert 'href="https://github.com/missing/' not in html
     assert result.headers["X-Robots-Tag"] == "noindex, follow"
@@ -155,6 +158,7 @@ def test_results_are_noindex_and_unknown_is_not_zero_or_maintenance(client, cata
     assert "No stack observation shown; not proof of absence." in html
     assert "Actively maintained" not in html
     assert 'data-comparison-state="compared"' in html
+    assert 'data-discovery-action="comparison_missing_search"' not in html
 
 
 @pytest.mark.django_db
@@ -260,7 +264,7 @@ def test_tools_are_discoverable_with_actual_edit_date():
     for name in ("tools", "compare_repositories"):
         assert name in sitemap.items()
         assert sitemap.location(name) == reverse(name)
-        expected = "2026-10-28" if name == "compare_repositories" else "2026-10-27"
+        expected = "2026-11-05" if name == "compare_repositories" else "2026-10-27"
         assert sitemap.lastmod(name).date().isoformat() == expected
 
 

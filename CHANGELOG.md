@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-05
+
+- Add internal recovery actions to unobserved repository-comparison columns: edit the corresponding identity without clearing the other choice, or return to repository search. Keep catalog absence explicit and track only fixed action labels, not entered identities.
+
 ## 2026-11-04
 
 - Extend the repository shortlisting guide with a reproducible Docker/Sysadmin cross-list search, pinned source-identity checks, and a path from stored membership to upstream requirements verification.
