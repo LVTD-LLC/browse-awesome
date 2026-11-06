@@ -100,6 +100,7 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     empty_license_guide: "empty_license_guide",
     filter_license_guide: "filter_license_guide",
     repository_compare: "repository_compare",
+    catalog_repository_compare: "catalog_repository_compare",
     comparison_missing_edit: "comparison_missing_edit",
     comparison_missing_search: "comparison_missing_search",
   };

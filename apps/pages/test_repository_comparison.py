@@ -16,7 +16,13 @@ from apps.repos.comparison import (
     comparison_columns,
     parse_repository_identity,
 )
-from apps.repos.models import AwesomeList, AwesomeListItem, Repository
+from apps.repos.models import (
+    AwesomeList,
+    AwesomeListItem,
+    Repository,
+    RepositoryLike,
+    UserStarredRepository,
+)
 from awesome_repos.sitemaps import StaticViewSitemap
 
 
@@ -283,3 +289,36 @@ def test_methodology_meets_content_and_accessible_diagram_contract():
         "/lists/",
     ):
         assert f'href="{path}"' in html
+
+
+@pytest.mark.django_db
+def test_public_result_handoff_retains_only_candidate_identity(client, catalog):
+    # Filtering a shortlist must not copy its query or requirements to the tool.
+    response = client.get(reverse("repos:search"), {"q": "requests", "language": "Python"})
+    html = response.content.decode()
+    assert response.status_code == 200
+    assert html.count('data-discovery-action="catalog_repository_compare"') == 1
+    destination = reverse("compare_repositories") + "?first=psf/requests"
+    assert f'href="{destination}"' in html
+    assert 'aria-label="Compare psf/requests with another repository"' in html
+    prepared = client.get(destination)
+    assert 'data-comparison-state="prepared"' in prepared.content.decode()
+    assert prepared.headers["X-Robots-Tag"] == "noindex, follow"
+    # Empty results cannot offer a candidate-specific action.
+    empty = client.get(reverse("repos:search"), {"q": "no-match-20261107"})
+    assert 'data-discovery-action="catalog_repository_compare"' not in empty.content.decode()
+
+
+@pytest.mark.django_db
+def test_personal_collections_do_not_get_catalog_comparison_handoff(
+    auth_client, user, profile, catalog
+):
+    repository = catalog[0]
+    UserStarredRepository.objects.create(profile=profile, repository=repository)
+    RepositoryLike.objects.create(user=user, repository=repository)
+    for route in ("repos:starred", "repos:liked"):
+        response = auth_client.get(reverse(route))
+        html = response.content.decode()
+        assert response.status_code == 200 and repository.full_name in html
+        assert 'data-discovery-action="catalog_repository_compare"' not in html
+        assert "Compare with another" not in html

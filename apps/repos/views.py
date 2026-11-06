@@ -918,6 +918,7 @@ class RepositorySearchView(ListView):
         context["total_lists"] = filter_options["total_lists"]
         context["search_eyebrow"] = "GitHub projects from awesome lists"
         context["search_title"] = "Search awesome repositories"
+        context["show_catalog_comparison_handoff"] = True
         context["search_description"] = (
             "Search names, descriptions, topics, tags, and stacks, then tune results by "
             "ecosystem, freshness, health, and cross-list signal."
