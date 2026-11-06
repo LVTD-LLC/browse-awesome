@@ -193,6 +193,12 @@
                 </dl>
 
                 <div class="mt-4 flex flex-wrap justify-end gap-x-3 gap-y-1 border-t border-gray-200 pt-3 text-sm font-semibold dark:border-gray-800">
+                    {% if show_catalog_comparison_handoff and not is_personal_starred_search %}
+                        <a href="{% url 'compare_repositories' %}?first={{ repo.full_name|urlencode }}"
+                           data-discovery-action="catalog_repository_compare"
+                           aria-label="Compare {{ repo.full_name }} with another repository"
+                           class="touch-inline-link text-green-700 hover:underline dark:text-green-300">Compare with another</a>
+                    {% endif %}
                     {% if repo.homepage_url and repo.homepage_url != repo.url %}
                         <a href="{{ repo.homepage_url }}"
                            target="_blank"

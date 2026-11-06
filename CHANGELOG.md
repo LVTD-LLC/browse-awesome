@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-06
+
+- Start a repository comparison from each public repository-search result with that candidate
+  already entered. Private starred and liked collections keep their existing cards;
+  the new click signal records only a fixed action label, not a repository or query.
+
 ## 2026-11-05
 
 - Add internal recovery actions to unobserved repository-comparison columns: edit the corresponding identity without clearing the other choice, or return to repository search. Keep catalog absence explicit and track only fixed action labels, not entered identities.
