@@ -1,3 +1,6 @@
+from html import escape
+from urllib.parse import parse_qs, urlsplit
+
 import pytest
 from django.urls import reverse
 
@@ -75,6 +78,7 @@ def test_directory_starting_points_do_not_displace_search_results(client, source
         assert filtered.status_code == 200
         assert b"Start with what you want to do" not in filtered.content
         assert filtered.context["list_starting_points"] == []
+        assert b'data-discovery-action="directory_empty_repositories"' not in filtered.content
 
     selected_list.is_disabled = True
     selected_list.save()
@@ -85,7 +89,27 @@ def test_directory_starting_points_do_not_displace_search_results(client, source
 
 
 @pytest.mark.django_db
-def test_directory_omits_chooser_when_no_starting_points_exist(client):
-    response = client.get(reverse("repos:list"))
+@pytest.mark.parametrize(
+    "params",
+    [
+        {},
+        {"q": "   "},
+        {"q": '  httpx & <script>" / café  '},
+        {"q": "httpx", "sort": "scanned", "min_age_years": "10"},
+    ],
+)
+def test_empty_directory_offers_repository_search_only_for_a_term(client, params):
+    response = client.get(reverse("repos:list"), params)
     assert response.status_code == 200
     assert b"Start with what you want to do" not in response.content
+    query = params.get("q", "").strip()
+    if query:
+        target = response.context["empty_list_repository_search_url"]
+        assert urlsplit(target).path == reverse("repos:search")
+        assert parse_qs(urlsplit(target).query) == {"q": [query]}
+        assert f'href="{escape(target)}"'.encode() in response.content
+        assert b'data-discovery-action="directory_empty_repositories"' in response.content
+        assert b"List history and sorting won't carry over." in response.content
+        assert client.get(target).status_code == 200
+    else:
+        assert b'data-discovery-action="directory_empty_repositories"' not in response.content
