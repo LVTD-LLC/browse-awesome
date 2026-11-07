@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-07
+
+- Offer repository search when a term finds no awesome lists, carrying only that
+  term and explaining why list history and sorting do not transfer. Keep discovery
+  telemetry limited to a fixed action label, without the search text or URL.
+
 ## 2026-11-06
 
 - Start a repository comparison from each public repository-search result with that candidate

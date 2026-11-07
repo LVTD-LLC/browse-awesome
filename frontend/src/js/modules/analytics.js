@@ -22,6 +22,7 @@
     ["bradAGI/awesome-cli-coding-agents", "directory_coding_agents"],
     ["public-apis/public-apis", "directory_apis"],
     ["directory_checklist", "directory_checklist"],
+    ["directory_empty_repositories", "directory_empty_repositories"],
     ["selfhosted_bookmarks", "selfhosted_bookmarks"],
     ["selfhosted_checklist", "selfhosted_checklist"],
     ["selfhosted_offline_test", "selfhosted_offline_test"],

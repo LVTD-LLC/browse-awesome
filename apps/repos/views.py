@@ -1090,6 +1090,10 @@ class AwesomeListListView(ListView):
         context["querystring"] = params.urlencode()
         context["active_list_filters"] = active_filters
         context["active_list_filter_count"] = len(active_filters)
+        # List age and sorting describe curators, not the repositories they link to.
+        context["empty_list_repository_search_url"] = (
+            f"{reverse('repos:search')}?{urlencode({'q': search_query})}" if search_query else None
+        )
         context["selected_list_sort_label"] = selected_sort_label
         context["list_starting_points"] = (
             awesome_list_starting_points()
