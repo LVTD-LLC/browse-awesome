@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-08
+
+- Help Awesome Django visitors distinguish reusable-package discovery from
+  studying complete applications. Link scoped authentication search, upstream
+  categories, and the existing dependency-evidence guide without classifying
+  text matches as verified packages or changing catalog results.
+
 ## 2026-11-07
 
 - Offer repository search when a term finds no awesome lists, carrying only that

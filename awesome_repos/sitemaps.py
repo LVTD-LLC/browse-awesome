@@ -18,6 +18,7 @@ from apps.repos.models import AwesomeList, Repository, RepositoryNewsletterIssue
 # Source-controlled list-page content changes are independent of catalog refreshes.
 # Keep these as actual edit timestamps, never the current build or request time.
 AWESOME_LIST_CONTENT_UPDATED_AT = {
+    "wsvincent/awesome-django": datetime(2026, 11, 8, 22, 19, tzinfo=UTC),
     "vinta/awesome-python": datetime(2026, 11, 1, 22, 18, tzinfo=UTC),
     "taishi-i/awesome-ChatGPT-repositories": datetime(2026, 10, 29, 22, 20, tzinfo=UTC),
     "bradAGI/awesome-cli-coding-agents": datetime(2026, 10, 17, 22, 19, tzinfo=UTC),

@@ -201,6 +201,11 @@ def test_selfhosted_bookmark_discovery_uses_current_list_route_and_scoped_search
             "awesome-chatgpt-repositories",
             "Find a ChatGPT-related project for your task",
         ),
+        (
+            "wsvincent/awesome-django",
+            "awesome-django",
+            "Adding a package or studying a Django app?",
+        ),
     ],
 )
 @pytest.mark.parametrize(
@@ -236,6 +241,7 @@ def test_task_discovery_does_not_interrupt_refined_browsing(client, params, sour
         "awesome-cli-coding-agents",
         "awesome-chatgpt-repositories",
         "awesome-python",
+        "awesome-django",
     ],
 )
 def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
@@ -260,6 +266,7 @@ def test_task_discovery_matches_list_source_not_reused_slug(client, slug):
     assert "Find the right part of your coding-agent workflow" not in response_text(response)
     assert "Find a ChatGPT-related project for your task" not in response_text(response)
     assert "Building a Python command-line app?" not in response_text(response)
+    assert "Adding a package or studying a Django app?" not in response_text(response)
     assert 'href="/blog/test-saved-webpages-offline/"' not in response_text(response)
 
 
@@ -345,6 +352,44 @@ def test_chatgpt_discovery_uses_current_source_route_and_scoped_text_search(clie
             f"example/{query}-tool"
         ]
         assert "Find a ChatGPT-related project for your task" not in response_text(filtered)
+
+
+def test_django_task_choice_uses_current_list_route_and_upstream_sections(client):
+    awesome_list = AwesomeList.objects.create(
+        name="Django resources",
+        slug="current-django-route",
+        source_url="https://github.com/wsvincent/awesome-django",
+        repo_full_name="wsvincent/awesome-django",
+    )
+    for name, in_list in (("accounts", True), ("outside", False)):
+        repository = Repository.objects.create(
+            full_name=f"example/{name}",
+            owner="example",
+            name=name,
+            url=f"https://github.com/example/{name}",
+            description="Authentication for a Django application",
+        )
+        if in_list:
+            AwesomeListItem.objects.create(awesome_list=awesome_list, repository=repository)
+
+    path = awesome_list.get_absolute_url()
+    response = client.get(path)
+    content = response_text(response)
+    assert response.status_code == 200
+    assert f'href="{path}?q=authentication"' in content
+    assert 'href="https://github.com/wsvincent/awesome-django#open-source-projects"' in content
+    assert 'href="https://github.com/wsvincent/awesome-django#third-party-packages"' in content
+    assert 'href="/blog/find-django-github-projects/"' in content
+    assert "text matches, not a verified package category" in content
+    filtered = client.get(path, {"q": "authentication"})
+    assert [repo.full_name for repo in filtered.context["page_obj"]] == ["example/accounts"]
+    assert "Adding a package or studying a Django app?" not in response_text(filtered)
+    for field in ("is_archived", "is_disabled"):
+        setattr(awesome_list, field, True)
+        awesome_list.save(update_fields=[field])
+        assert "Adding a package or studying a Django app?" not in response_text(client.get(path))
+        setattr(awesome_list, field, False)
+        awesome_list.save(update_fields=[field])
 
 
 def test_python_cli_pair_is_same_list_available_and_does_not_interrupt_search(client):

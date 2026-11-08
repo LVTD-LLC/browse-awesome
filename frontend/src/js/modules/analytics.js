@@ -33,6 +33,8 @@
     ["python_cli_click", "python_cli_click"],
     ["python_cli_typer", "python_cli_typer"],
     ["python_cli_compare", "python_cli_compare"],
+    ["django_authentication", "django_authentication"],
+    ["django_dependency_guide", "django_dependency_guide"],
     ["coding_agents", "coding_agents"],
     ["coding_multiplexers", "coding_multiplexers"],
     ["coding_harnesses", "coding_harnesses"],
