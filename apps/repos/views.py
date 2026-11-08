@@ -1435,6 +1435,13 @@ class AwesomeListDetailView(DetailView):
             and not repository_filters_applied(self.request.GET, include_sort=True)
             and self.request.GET.get("page", "1") in ("", "1")
         )
+        context["show_django_discovery"] = (
+            self.object.repo_full_name == "wsvincent/awesome-django"
+            and not self.object.is_archived
+            and not self.object.is_disabled
+            and not repository_filters_applied(self.request.GET, include_sort=True)
+            and self.request.GET.get("page", "1") in ("", "1")
+        )
         context["python_cli_comparison"] = (
             python_cli_comparison(all_list_repos)
             if self.object.repo_full_name == "vinta/awesome-python"
