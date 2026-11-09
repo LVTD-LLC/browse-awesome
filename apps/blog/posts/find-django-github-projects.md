@@ -8,7 +8,7 @@ description: >-
   integration, development tooling, or an example before deciding what to study.
 meta_description: Find GitHub projects using Django, then verify manifest evidence with real linkding and factory_boy examples and a dependency-role worksheet.
 published_at: 2026-10-26T01:20:00+03:00
-updated_at: 2026-10-26T01:20:00+03:00
+updated_at: 2026-11-10T01:24:40+03:00
 author: Browse Awesome Team
 author_type: Organization
 image: /static/brand/awesome-repos-social.png
@@ -105,4 +105,4 @@ Copy this into your notes: **Repository:** __. **Inspected commit and date:** __
 
 Do not substitute a lockfile entry for that classification. A lockfile can record resolved dependencies for an environment without explaining each dependency's role or proving that a running environment matches it. Likewise, an absent catalog label does not establish that a framework is absent: the detector works with a [bounded set of recognized files](https://github.com/LVTD-LLC/awesome/blob/b335b234358d05d7f6d0541ceb1b85f5f6c65923/apps/repos/stack_detection.py#L602-L646) and stored observations, not an exhaustive architectural review.
 
-Once the dependency role matches your task, continue with the [repository-shortlisting worksheet](/blog/how-to-shortlist-github-repositories/) for fit, licensing, and a small real trial. Or return to the [Django-filtered catalog](/repos/?framework=django) with a clearer exclusion rule. The useful outcome is a shorter, better-supported reading list—not the largest collection of Django labels.
+Once the dependency role matches your task, continue with the [repository-shortlisting worksheet](/blog/how-to-shortlist-github-repositories/) for fit, licensing, and a small real trial. For a concrete package-evaluation example, [test Django history packages against saves, bulk writes and rollback](/blog/verify-django-history-write-paths/) using a disposable synthetic fixture. Or return to the [Django-filtered catalog](/repos/?framework=django) with a clearer exclusion rule. The useful outcome is a shorter, better-supported reading list—not the largest collection of Django labels.

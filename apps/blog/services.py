@@ -407,6 +407,24 @@ def license_discovery_schema(post: BlogPost) -> dict:
     return schema
 
 
+def django_history_schema(post: BlogPost) -> dict:
+    schema = repository_shortlist_schema(post)
+    schema["@graph"][0]["step"] = [
+        {"@type": "HowToStep", "position": position, "name": name}
+        for position, name in enumerate(
+            (
+                "Define the evidence before finding a package",
+                "Run the fixture in a disposable environment",
+                "Read stored state and history separately",
+                "Test supported alternatives without hiding the default",
+                "Turn the result into a shortlist decision",
+            ),
+            start=1,
+        )
+    ]
+    return schema
+
+
 def mcp_discovery_schema(post: BlogPost) -> dict:
     schema = repository_shortlist_schema(post)
     schema["@graph"][0]["step"] = [

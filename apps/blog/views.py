@@ -13,6 +13,7 @@ from apps.blog.services import (
     blog_post_schema,
     default_blog_image_url,
     django_dependency_schema,
+    django_history_schema,
     get_blog_post,
     json_ld,
     license_discovery_schema,
@@ -62,6 +63,8 @@ def post_detail(request, slug):
                 if post.slug == "find-django-github-projects"
                 else json_ld(license_discovery_schema(post))
                 if post.slug == "filter-github-repositories-by-license"
+                else json_ld(django_history_schema(post))
+                if post.slug == "verify-django-history-write-paths"
                 else json_ld(blog_breadcrumb_schema(post))
             ),
         },
