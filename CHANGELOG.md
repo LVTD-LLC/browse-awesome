@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-09
+
+- Add a reproducible Django history-package evaluation walkthrough and isolated
+  synthetic fixture for saves, bulk writes, tracked relations, deletion and
+  rollback. Link from the Django dependency guide; distinguish checked behavior
+  from security guarantees, performance and universal package rankings.
+
 ## 2026-11-08
 
 - Help Awesome Django visitors distinguish reusable-package discovery from

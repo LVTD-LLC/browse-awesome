@@ -21,6 +21,41 @@ from awesome_repos.sitemaps import BlogPostSitemap
 pytestmark = pytest.mark.django_db
 
 
+def test_published_history_probe_has_fixture_discovery_and_rendering(client):
+    slug = "verify-django-history-write-paths"
+    post = get_blog_post(slug)
+    response = client.get(post.get_absolute_url())
+    content = response_text(response)
+    assert response.status_code == 200
+    assert f'<link rel="canonical" href="{post.canonical_url}"' in content
+    assert '<meta name="robots" content="index, follow"' in content
+    assert "history-probe-title" in content
+    assert "<table>" in content and "overflow-x-auto" in content
+    assert "docs/examples/django-history" in content
+    assert "QuerySet.update()" in content
+    schemas = [
+        json.loads(value)
+        for value in re.findall(
+            r'<script type="application/ld\+json">(.*?)</script>', content, re.DOTALL
+        )
+    ]
+    assert any(schema.get("@type") == "BlogPosting" for schema in schemas)
+    graph = next(schema["@graph"] for schema in schemas if "@graph" in schema)
+    how_to = next(schema for schema in graph if schema["@type"] == "HowTo")
+    assert len(how_to["step"]) == 5
+    for number, step in enumerate(how_to["step"], start=1):
+        assert f"<h2>{number}. {step['name']}</h2>" in content
+    assert post in BlogPostSitemap().items()
+    assert BlogPostSitemap().lastmod(post) == post.updated_at
+    assert f'href="{post.get_absolute_url()}"' in response_text(
+        client.get(reverse("blog:post_list"))
+    )
+    dependency_guide = client.get(
+        reverse("blog:post_detail", kwargs={"slug": "find-django-github-projects"})
+    )
+    assert f'href="{post.get_absolute_url()}"' in response_text(dependency_guide)
+
+
 @pytest.fixture
 def blog_posts_dir(tmp_path, settings):
     settings.BLOG_POSTS_DIR = tmp_path
