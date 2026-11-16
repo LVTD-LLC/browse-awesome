@@ -69,11 +69,32 @@
             </p>
         </aside>
     </section>
-    <section>
+    <section id="comparison-next-check" class="scroll-mt-28">
         <h2 class="text-2xl font-bold text-gray-950 dark:text-white">Turn the comparison into a small trial</h2>
         <p class="mt-4">
             For each candidate, record one evidence URL, the version you checked, the unresolved requirement and your next test. Keep “not checked” separate from “does not support it.” Follow the <a href="{% url 'blog:post_detail' slug='how-to-shortlist-github-repositories' %}" class="underline">repository shortlisting worksheet</a> for a repeatable evaluation. If neither candidate fits, return to <a href="{% url 'repos:search' %}" class="underline">repository search</a> with a more specific task instead of choosing the larger star count.
         </p>
+        <div class="mt-5 rounded-2xl border border-gray-200 p-5 dark:border-gray-800">
+            <h3 class="font-bold text-gray-950 dark:text-white">Choose the next check for your task</h3>
+            <ul class="mt-3 list-disc space-y-3 pl-5">
+                <li>
+                    <strong>License question?</strong> <a href="{% url 'blog:post_detail' slug='filter-github-repositories-by-license' %}"
+    data-discovery-action="comparison_license_evidence"
+    class="underline">Check the upstream license files at a fixed revision</a>. A stored label is not permission to reuse the code.
+                </li>
+                <li>
+                    <strong>Django dependency match?</strong> <a href="{% url 'blog:post_detail' slug='find-django-github-projects' %}"
+    data-discovery-action="comparison_dependency_evidence"
+    class="underline">Read the dependency's role before shortlisting the project</a>. An application dependency, optional extra, development requirement and example can answer different needs.
+                </li>
+                <li>
+                    <strong>Django history package?</strong> <a href="{% url 'blog:post_detail' slug='verify-django-history-write-paths' %}"
+    data-discovery-action="comparison_write_path_trial"
+    class="underline">Test saves, bulk writes and rollback with a synthetic fixture</a>. The walkthrough uses pinned packages and in-memory SQLite; repeat relevant checks for your own database and write paths.
+                </li>
+            </ul>
+            <p class="mt-3 text-sm leading-6">These are optional evaluation paths, not findings about the repositories entered above. Guide links checked November 16, 2026.</p>
+        </div>
         <p class="mt-4">
             Methodology checked October 27, 2026 against Browse Awesome's comparison code and GitHub's <a href="https://docs.github.com/en/rest/repos/repos#get-a-repository"
     class="underline">repository metadata reference</a>. That date describes the method, not the freshness of every catalog entry. Stored data can change on later catalog refreshes. Cite this tool as “Browse Awesome, Compare GitHub repositories,” link to this base page and record the observation dates in any comparison you publish.

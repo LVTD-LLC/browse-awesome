@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-16
+
+- Connect repository comparison to task-specific license evidence, Django
+  dependency-role checks and the existing synthetic history write-path trial.
+  Keep these optional guides separate from catalog findings, with fixed,
+  input-free discovery labels.
+
 ## 2026-11-09
 
 - Add a reproducible Django history-package evaluation walkthrough and isolated

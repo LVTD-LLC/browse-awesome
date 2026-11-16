@@ -164,6 +164,7 @@ def test_results_are_noindex_and_unknown_is_not_zero_or_maintenance(client, cata
     assert "No stack observation shown; not proof of absence." in html
     assert "Actively maintained" not in html
     assert 'data-comparison-state="compared"' in html
+    assert 'href="#comparison-next-check"' in html
     assert 'data-discovery-action="comparison_missing_search"' not in html
 
 
@@ -270,7 +271,7 @@ def test_tools_are_discoverable_with_actual_edit_date():
     for name in ("tools", "compare_repositories"):
         assert name in sitemap.items()
         assert sitemap.location(name) == reverse(name)
-        expected = "2026-11-05" if name == "compare_repositories" else "2026-10-27"
+        expected = "2026-11-16" if name == "compare_repositories" else "2026-10-27"
         assert sitemap.lastmod(name).date().isoformat() == expected
 
 
@@ -285,10 +286,16 @@ def test_methodology_meets_content_and_accessible_diagram_contract():
     for path in (
         "/blog/github-star-growth/",
         "/blog/how-to-shortlist-github-repositories/",
+        "/blog/filter-github-repositories-by-license/",
+        "/blog/find-django-github-projects/",
+        "/blog/verify-django-history-write-paths/",
         "/repos/",
         "/lists/",
     ):
         assert f'href="{path}"' in html
+    assert "in-memory SQLite" in html
+    assert "not findings about the repositories entered above" in html
+    assert 'id="comparison-next-check"' in html
 
 
 @pytest.mark.django_db

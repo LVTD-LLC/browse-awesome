@@ -106,6 +106,9 @@ test("task shortcuts emit fixed labels without link text, URLs or query input", 
     catalog_repository_compare: "catalog_repository_compare",
     comparison_missing_edit: "comparison_missing_edit",
     comparison_missing_search: "comparison_missing_search",
+    comparison_license_evidence: "comparison_license_evidence",
+    comparison_dependency_evidence: "comparison_dependency_evidence",
+    comparison_write_path_trial: "comparison_write_path_trial",
   };
   for (const [input, output] of Object.entries(actions)) {
     const link = {
