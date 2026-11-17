@@ -62,10 +62,24 @@
             {% include "blog/includes/license_evidence_process.html" %}
         {% endif %}
         {% if post.slug == "verify-django-history-write-paths" %}
+            <nav aria-label="Guide sections"
+                 class="mt-8 rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+                <p class="font-semibold">In this guide</p>
+                <ol class="mt-3 space-y-2 text-sm">
+                    {% for step in history_outline %}
+                        <li>
+                            <a href="#{{ step.id }}" class="touch-inline-link underline">{{ step.position }}. {{ step.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </nav>
+            <p class="mt-4 text-sm text-gray-600 dark:text-gray-300">
+                PostgreSQL extension checked November 17, 2026, UTC. The original November 9 SQLite observations remain separate.
+            </p>
             {% include "blog/includes/history_probe_process.html" %}
         {% endif %}
-        <div class="prose prose-gray mt-8 max-w-none dark:prose-invert{% if post.slug == 'find-django-github-projects' or post.slug == 'filter-github-repositories-by-license' or post.slug == 'verify-django-history-write-paths' %} [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto{% endif %}">
-            {{ post.html|safe }}
+        <div class="prose prose-gray mt-8 max-w-none dark:prose-invert{% if post.slug == 'find-django-github-projects' or post.slug == 'filter-github-repositories-by-license' or post.slug == 'verify-django-history-write-paths' %} [&_h2]:scroll-mt-28 [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto{% endif %}">
+            {{ post_html|safe }}
         </div>
         {% if post.tags %}
             <footer class="mt-10 flex flex-wrap gap-2 border-t border-gray-200 pt-6 dark:border-gray-800">

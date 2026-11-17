@@ -407,20 +407,39 @@ def license_discovery_schema(post: BlogPost) -> dict:
     return schema
 
 
+DJANGO_HISTORY_STEPS = (
+    "Define the evidence before finding a package",
+    "Run the fixture in a disposable environment",
+    "Read stored state and history separately",
+    "Test supported alternatives without hiding the default",
+    "Check PostgreSQL bulk and raw-SQL paths separately",
+    "Turn the result into a shortlist decision",
+)
+
+
+def django_history_outline():
+    return [
+        {"id": f"history-step-{position}", "name": name, "position": position}
+        for position, name in enumerate(DJANGO_HISTORY_STEPS, start=1)
+    ]
+
+
+def django_history_html(post: BlogPost) -> str:
+    # Add only fixed trusted anchors after sanitization; do not expand Markdown permissions.
+    html = post.html
+    for step in django_history_outline():
+        heading = f"<h2>{step['position']}. {step['name']}</h2>"
+        html = html.replace(
+            heading, f'<h2 id="{step["id"]}">{step["position"]}. {step["name"]}</h2>'
+        )
+    return html
+
+
 def django_history_schema(post: BlogPost) -> dict:
     schema = repository_shortlist_schema(post)
     schema["@graph"][0]["step"] = [
-        {"@type": "HowToStep", "position": position, "name": name}
-        for position, name in enumerate(
-            (
-                "Define the evidence before finding a package",
-                "Run the fixture in a disposable environment",
-                "Read stored state and history separately",
-                "Test supported alternatives without hiding the default",
-                "Turn the result into a shortlist decision",
-            ),
-            start=1,
-        )
+        {"@type": "HowToStep", "position": step["position"], "name": step["name"]}
+        for step in django_history_outline()
     ]
     return schema
 
