@@ -33,6 +33,9 @@ def test_published_history_probe_has_fixture_discovery_and_rendering(client):
     assert "<table>" in content and "overflow-x-auto" in content
     assert "docs/examples/django-history" in content
     assert "QuerySet.update()" in content
+    assert "docs/examples/django-history-postgres" in content
+    assert "PostgreSQL 15.19" in content
+    assert "Roll back the raw-SQL change" in content
     schemas = [
         json.loads(value)
         for value in re.findall(
@@ -42,9 +45,10 @@ def test_published_history_probe_has_fixture_discovery_and_rendering(client):
     assert any(schema.get("@type") == "BlogPosting" for schema in schemas)
     graph = next(schema["@graph"] for schema in schemas if "@graph" in schema)
     how_to = next(schema for schema in graph if schema["@type"] == "HowTo")
-    assert len(how_to["step"]) == 5
+    assert len(how_to["step"]) == 6
     for number, step in enumerate(how_to["step"], start=1):
-        assert f"<h2>{number}. {step['name']}</h2>" in content
+        assert f'<h2 id="history-step-{number}">{number}. {step["name"]}</h2>' in content
+        assert f'href="#history-step-{number}"' in content
     assert post in BlogPostSitemap().items()
     assert BlogPostSitemap().lastmod(post) == post.updated_at
     assert f'href="{post.get_absolute_url()}"' in response_text(

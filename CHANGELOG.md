@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-18
+
+- Extend the original Django history evaluation guide with a reproducible disposable PostgreSQL trial of ordinary bulk and raw-SQL writes, trigger/event checks and rollback. Keep the earlier SQLite observations separate; add section navigation without expanding Markdown permissions.
+
 ## 2026-11-16
 
 - Connect repository comparison to task-specific license evidence, Django

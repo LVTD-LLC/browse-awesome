@@ -3,13 +3,12 @@ title: "Test Django history packages against your actual write paths"
 seo_title: "Test Django history packages: a write-path trial"
 description: >-
   Before choosing a Django history package, test the operations your application
-  actually uses. This reproducible synthetic trial checks saves, bulk writes,
-  configured many-to-many changes, deletion and rollback in django-simple-history
-  and django-auditlog. Its purpose is a better-supported shortlist, not a package
-  ranking or a production audit guarantee.
+  actually uses. Separate reproducible SQLite and PostgreSQL trials check
+  configured write paths, including bulk and direct-SQL changes. The purpose is
+  a better-supported shortlist, not a package ranking or production audit guarantee.
 meta_description: "Run a pinned Django history-package trial covering saves, bulk writes, many-to-many changes and rollback before keeping a repository on your shortlist."
 published_at: 2026-11-10T01:24:40+03:00
-updated_at: 2026-11-10T01:24:40+03:00
+updated_at: 2026-11-18T01:26:00+03:00
 author: Browse Awesome Team
 author_type: Organization
 image: /static/brand/awesome-repos-social.png
@@ -26,7 +25,7 @@ keywords:
 
 To evaluate a Django history package, test your application's write paths before comparing repository popularity. An instance save, a queryset update and a relation change do not exercise the same hooks. Use a disposable model, verify both its stored state and its history, then keep candidates that meet your specific evidence requirement.
 
-This walkthrough supplies a [runnable synthetic fixture](https://github.com/LVTD-LLC/browse-awesome/tree/main/docs/examples/django-history) for two candidates: **django-simple-history** and **django-auditlog**. Browse Awesome executed it on November 9, 2026, UTC, using Python 3.14.7, Django 5.2.19, django-simple-history 3.13.0 and django-auditlog 3.4.2. Three fresh-process runs produced the same assertions and results. These are local behavior checks with fictional records, not customer analytics, a performance benchmark or a security assessment.
+This walkthrough supplies a [runnable synthetic fixture](https://github.com/LVTD-LLC/browse-awesome/tree/main/docs/examples/django-history) for two candidates: **django-simple-history** and **django-auditlog**. Browse Awesome executed it on November 9, 2026, UTC, using Python 3.14.7, Django 5.2.19, django-simple-history 3.13.0 and django-auditlog 3.4.2. Three fresh-process runs produced the same assertions and results. These are local behavior checks with fictional records, not customer analytics, a performance benchmark or a security assessment. The separate PostgreSQL extension in step 5 preserves those original observations and tests a different database and capture mechanism.
 
 ## 1. Define the evidence before finding a package
 
@@ -87,12 +86,54 @@ When adapting the fixture, keep a failing ordinary-operation case beside the pro
 
 Auditlog's [tested receiver source](https://github.com/django-commons/django-auditlog/blob/6a2a88f90f908b7d2aa9aa9e62a077a4c330cb18/auditlog/receivers.py) and [manual logging interfaces](https://django-auditlog.readthedocs.io/en/latest/internals.html) are relevant when designing another path. This fixture does **not** implement or test a manual Auditlog bulk adapter. “Not tested here” is not “impossible.” Do not treat an unimplemented alternative as a reason to declare one package the winner.
 
-## 5. Turn the result into a shortlist decision
+## 5. Check PostgreSQL bulk and raw-SQL paths separately
 
-Write down the required operation, expected evidence, tested version, observed state, observed history and unresolved question. A useful decision could be: “Our import uses ordinary bulk updates. Neither default setup in this fixture records that path. Evaluate a deliberate history-aware path before keeping either candidate for the import requirement.” That is narrower and more actionable than “this library supports auditing.”
+If your application writes directly to PostgreSQL, a SQLite result leaves a material question unanswered. Browse Awesome ran a [separate disposable PostgreSQL fixture](https://github.com/LVTD-LLC/browse-awesome/tree/main/docs/examples/django-history-postgres) on November 17, 2026, UTC. It adds **django-pghistory** as a trigger-based candidate alongside equivalent simple-history and Auditlog models. Each has only a name field and Django's primary key; no automatic timestamp changes an otherwise unchanged save.
+
+The observed environment was PostgreSQL 15.19, Python 3.14.7, Django 5.2.19, django-simple-history 3.13.0, django-auditlog 3.4.2, django-pghistory 3.9.2, django-pgtrigger 4.17.0 and psycopg 3.3.4. The pinned [pghistory release](https://pypi.org/project/django-pghistory/3.9.2/) documents `@pghistory.track()` and the normal migration workflow. Its default insert/update configuration is what this fixture tests, not every configurable tracker. The [event-tracking documentation](https://django-pghistory.readthedocs.io/en/stable/event_tracking/) explains changed-field conditions and snapshot choices.
+
+You need a non-root Unix account, uv and already-installed PostgreSQL 15 server binaries. From the repository root, run the command below, adjusting `--postgres-bin` to that installation. The uv flags follow the [script-environment reference](https://docs.astral.sh/uv/guides/scripts/). The fixture's cluster lifecycle follows the official [PostgreSQL 15 initdb](https://www.postgresql.org/docs/15/app-initdb.html) and [pg_ctl](https://www.postgresql.org/docs/15/app-pg-ctl.html) references; these settings are for disposable testing, not deployment.
+
+```sh
+uv run --no-project --python 3.14.7 \
+  --with Django==5.2.19 \
+  --with django-simple-history==3.13.0 \
+  --with django-auditlog==3.4.2 \
+  --with django-pghistory==3.9.2 \
+  --with django-pgtrigger==4.17.0 \
+  --with 'psycopg[binary]==3.3.4' \
+  python docs/examples/django-history-postgres/trial.py \
+  --postgres-bin /usr/lib/postgresql/15/bin
+```
+
+The script creates a new local cluster inside a private temporary directory, listens only on its own Unix socket and ignores application database settings. Trust authentication and skipped initialization sync apply only there. It copies the example models into that directory, generates and applies real migrations, runs Django checks, and confirms two installed, enabled pghistory triggers. It stops its own server and removes its temporary files after a confirmed shutdown; an unconfirmed shutdown retains that directory for inspection. Package downloads may use the network; the database trial uses no external service or production records. JSON output includes source hashes, generated-migration hashes, versions and checked event contents.
+
+On narrow screens, scroll the table sideways to see all three libraries.
+
+**Observed PostgreSQL fixture results, November 17, 2026, UTC.** Initial creation is excluded from update deltas. The bulk-create row is a separate operation creating two fictional objects.
+
+| Operation | simple-history: new records | Auditlog: new entries | pghistory: new events |
+| --- | --- | --- | --- |
+| Save without changing the name | 1 | 0 | 0 |
+| Change the name and save | 1 | 1 | 1 |
+| Change the name with `QuerySet.update()` | 0 | 0 | 1 |
+| Change the name with ordinary `bulk_update()` | 0 | 0 | 1 |
+| Parameterized raw SQL changes the name | 0 | 0 | 1 |
+| Ordinary `bulk_create()` of two objects | 0 | 0 | 2 |
+| Roll back the raw-SQL change | 0 | 0 | 0 |
+
+The trial checks the stored name independently from history. When a new record is expected, it also checks the tracked object's identity and recorded name; Auditlog's changed-save entry must contain the exact before/after values and update action. Pghistory's new-row snapshot must carry the expected insert or update label. In the rollback case, the script first confirms the changed row and pghistory event inside the transaction, then verifies that neither survives rollback. Two fresh-cluster runs produced the same checked results and source hashes. That checks reproducibility of this small setup, not reliability across applications.
+
+The practical question is where your required write can bypass the capture mechanism. In this configuration, the pghistory triggers captured the tested ordinary bulk and direct-SQL changes that the two automatic signal-based configurations did not. That is consistent with pghistory's [documented scope](https://django-pghistory.readthedocs.io/en/stable/), but the observed values and assertions—not the package description—are this trial's evidence. Raw SQL uses bound values following [Django 5.2's custom-SQL reference](https://docs.djangoproject.com/en/5.2/topics/db/sql/#executing-custom-sql-directly).
+
+Do not turn that distinction into a winner. The earlier simple-history helpers remain deliberately different write paths; a manual Auditlog adapter is untested here, not impossible. Default pghistory tracking does not imply deletion coverage, and its [context documentation](https://django-pghistory.readthedocs.io/en/stable/context/) treats context separately: this fixture configures no actor identity. It does not retest many-to-many changes or deletion on PostgreSQL, nor establish concurrency, performance, tamper resistance or durable logging of rolled-back attempts. Reproduce the requirement with your own schema and transaction boundary before choosing an integration.
+
+## 6. Turn the result into a shortlist decision
+
+Write down the required operation, expected evidence, tested version, observed state, observed history and unresolved question. A useful decision could be: “Our import uses ordinary bulk updates. The original SQLite trial found no automatic history for the two signal-based setups. The PostgreSQL trial captured that operation with pghistory. Evaluate the required event contents and deployment constraints, or a deliberate history-aware alternative, before choosing an integration.” That is narrower and more actionable than “this library supports auditing.”
 
 For an application that needs point-in-time model snapshots, investigate simple-history's documented query and administration workflows next. For one that needs change entries with selected fields and actor context, investigate Auditlog's documented configuration next. Those are reasons to continue evaluating, not findings that this fixture tested either workflow end to end.
 
-Then extend the test only where your actual requirement differs. Relevant next cases might include a custom manager, explicit through models, worker actor context, a database router or direct SQL. Run against your database engine and transaction design before making an integration decision. This SQLite fixture says nothing about PostgreSQL-specific behavior, concurrency, throughput, storage growth, raw SQL, tamper resistance, access policy or regulatory suitability.
+Then extend the test only where your actual requirement differs. Relevant next cases might include a custom manager, explicit through models, worker actor context, a database router or direct SQL. Run against your database engine and transaction design before making an integration decision. The original SQLite fixture leaves PostgreSQL and raw SQL untested; the separate PostgreSQL extension answers only the named operations and configuration. Neither trial establishes concurrency, throughput, storage growth, tamper resistance, access policy or regulatory suitability.
 
 Keep the versions, command, source hashes and failed checks with the decision. Re-run when the package version or your application's write path changes, not merely because a repository's star count moved. Return to the [repository-shortlisting worksheet](/blog/how-to-shortlist-github-repositories/) to combine this small behavior trial with license, maintenance and task-fit evidence. The goal is a shorter shortlist with a testable reason for each candidate—not a universal ranking of Django history packages.

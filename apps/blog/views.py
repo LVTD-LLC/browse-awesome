@@ -13,6 +13,8 @@ from apps.blog.services import (
     blog_post_schema,
     default_blog_image_url,
     django_dependency_schema,
+    django_history_html,
+    django_history_outline,
     django_history_schema,
     get_blog_post,
     json_ld,
@@ -50,6 +52,12 @@ def post_detail(request, slug):
         "blog/post_detail.html",
         {
             "post": post,
+            "history_outline": django_history_outline()
+            if post.slug == "verify-django-history-write-paths"
+            else [],
+            "post_html": django_history_html(post)
+            if post.slug == "verify-django-history-write-paths"
+            else post.html,
             "canonical_url": post.canonical_url,
             "schema_json": json_ld(blog_post_schema(post)),
             "supplementary_schema_json": (
