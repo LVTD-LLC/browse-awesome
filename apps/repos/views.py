@@ -875,15 +875,17 @@ class RepositorySearchView(ListView):
             and search_page == "1"
         ):
             params = repository_search_params(self.request)
+            sort = (params.get("sort") or "").strip()
+            direction = (params.get("sort_direction") or "").strip().lower()
             queue_track_event(
                 event_name="search_performed",
                 profile_id=profile.id,
                 properties={
-                    "query": params.get("q", ""),
-                    "mode": params.get("mode", ""),
+                    "has_query": bool((params.get("q") or "").strip()),
+                    "mode": "semantic" if (params.get("mode") or "").strip() == "semantic" else "",
                     "results_count": context["page_obj"].paginator.count,
-                    "sort": params.get("sort", ""),
-                    "sort_direction": params.get("sort_direction", ""),
+                    "sort": sort if sort in REPOSITORY_SORT_LABELS else "",
+                    "sort_direction": direction if direction in {"asc", "desc"} else "",
                     "search_scope": "public_repositories",
                     "filters_applied": repository_filters_applied(params, include_sort=False),
                 },

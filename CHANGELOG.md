@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-19
+
+- Keep signed-in catalog search text out of analytics and analytics logs. Retain
+  whether a term was entered, result counts, and recognized search options.
+
 ## 2026-11-18
 
 - Extend the original Django history evaluation guide with a reproducible disposable PostgreSQL trial of ordinary bulk and raw-SQL writes, trigger/event checks and rollback. Keep the earlier SQLite observations separate; add section navigation without expanding Markdown permissions.

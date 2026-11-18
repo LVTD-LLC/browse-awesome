@@ -5626,7 +5626,7 @@ def test_repository_search_tracks_first_page_only(auth_client, user, monkeypatch
             "event_name": "search_performed",
             "profile_id": user.profile.id,
             "properties": {
-                "query": "framework",
+                "has_query": True,
                 "mode": "",
                 "results_count": 31,
                 "sort": "",
@@ -5643,6 +5643,45 @@ def test_repository_search_tracks_first_page_only(auth_client, user, monkeypatch
 
     assert response.status_code == 200
     assert events == []
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("params", "expected"),
+    [
+        (
+            {
+                "q": "synthetic contact detail",
+                "mode": "private",
+                "sort": "private",
+                "sort_direction": "private",
+            },
+            {"has_query": True, "mode": "", "sort": "", "sort_direction": ""},
+        ),
+        (
+            {"q": "   ", "mode": "semantic", "sort": "stars", "sort_direction": "ASC"},
+            {"has_query": False, "mode": "semantic", "sort": "stars", "sort_direction": "asc"},
+        ),
+    ],
+)
+def test_repository_search_queues_only_safe_search_metadata(
+    auth_client, monkeypatch, params, expected
+):
+    events = []
+    monkeypatch.setattr(
+        "apps.repos.views.queue_track_event", lambda **kwargs: events.append(kwargs)
+    )
+
+    response = auth_client.get(reverse("repos:search"), params)
+
+    assert response.status_code == 200
+    assert len(events) == 1
+    assert events[0]["properties"] == {
+        **expected,
+        "results_count": 0,
+        "search_scope": "public_repositories",
+        "filters_applied": True,
+    }
 
 
 @pytest.mark.django_db
