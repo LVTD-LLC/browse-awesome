@@ -138,6 +138,33 @@ def test_track_event_does_not_set_person_properties_by_default(profile, monkeypa
     ]
 
 
+@override_settings(POSTHOG_API_KEY="phc_test")
+def test_track_event_scrubs_legacy_queued_search_before_capture_and_logging(monkeypatch):
+    captures = []
+    logs = []
+    monkeypatch.setattr("apps.core.tasks.posthog.capture", lambda *a, **kw: captures.append(kw))
+    monkeypatch.setattr("apps.core.tasks.logger.info", lambda *a, **kw: logs.append(kw))
+
+    result = track_event(
+        profile_id=None,
+        distinct_id="synthetic-id",
+        event_name="search_performed",
+        properties={
+            "query": "synthetic contact detail",
+            "mode": "private",
+            "sort": "private",
+            "sort_direction": "private",
+            "results_count": 3,
+            "search_scope": "public_repositories",
+        },
+    )
+
+    assert result == "Tracked event search_performed"
+    expected = {"has_query": True, "results_count": 3, "search_scope": "public_repositories"}
+    assert captures[0]["properties"] == expected
+    assert logs[0]["properties"] == expected
+
+
 @pytest.mark.django_db
 @override_settings(POSTHOG_API_KEY="phc_test")
 def test_try_create_posthog_alias_does_not_alias_email(profile, monkeypatch):

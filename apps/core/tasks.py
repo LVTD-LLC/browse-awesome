@@ -81,6 +81,12 @@ def track_event(
         return "PostHog API key not found."
 
     properties = _scrub_analytics_properties(properties or {})
+    if event_name == "search_performed" and "query" in properties:
+        # Jobs queued by an older web process may still carry raw URL input.
+        legacy_query = properties.pop("query")
+        properties["has_query"] = isinstance(legacy_query, str) and bool(legacy_query.strip())
+        for key in ("mode", "sort", "sort_direction"):
+            properties.pop(key, None)
     base_log_data = {
         "profile_id": profile_id,
         "distinct_id": distinct_id,
