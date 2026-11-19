@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-20
+
+- Offer a catalog-wide search when a curated list has no matching repositories,
+  keeping the search term, repository filters, and sort order.
+
 ## 2026-11-19
 
 - Keep signed-in catalog search text out of analytics and analytics logs. Retain
