@@ -13,7 +13,9 @@
         {% endif %}
     </h2>
     <p class="mt-2 max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-300">
-        {% if filters_applied %}
+        {% if search_across_catalog_url %}
+            Search the full repository catalog without changing your search or filters.
+        {% elif filters_applied %}
             Try a broader term or remove a requirement. A missing match here does not mean the project does not exist on GitHub.
         {% elif is_personal_starred_search %}
             Import your GitHub stars from settings to search them here.
@@ -34,6 +36,13 @@
         </p>
     {% endif %}
     <div class="mt-5 flex flex-wrap gap-3">
+        {% if search_across_catalog_url %}
+            <a href="{{ search_across_catalog_url }}"
+               data-discovery-action="empty_search_across_catalog"
+               class="inline-flex min-h-11 items-center justify-center rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-800 dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400">
+                Search across all lists
+            </a>
+        {% endif %}
         {% if search_without_license_url %}
             <a href="{{ search_without_license_url }}"
                {% if not is_personal_starred_search %}data-discovery-action="empty_remove_license"{% endif %}
@@ -44,7 +53,7 @@
         {% if search_relaxed_url %}
             <a href="{{ search_relaxed_url }}"
                {% if not is_personal_starred_search %}data-discovery-action="empty_keep_search"{% endif %}
-               class="inline-flex min-h-11 items-center justify-center rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-800 dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400">
+               class="inline-flex min-h-11 items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold {% if search_across_catalog_url %}border border-gray-300 text-gray-900 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800{% else %}bg-green-700 text-white hover:bg-green-800 dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400{% endif %}">
                 Remove filters, keep search
             </a>
         {% endif %}

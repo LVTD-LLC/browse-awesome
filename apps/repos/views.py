@@ -1422,6 +1422,17 @@ class AwesomeListDetailView(DetailView):
         )
         context["awesome_list_history_chart_data"] = awesome_list_history_chart_data(self.object)
         context["page_obj"] = Paginator(repos, 50).get_page(self.request.GET.get("page"))
+        if not context["page_obj"] and context["filters_applied"]:
+            # These params already exclude pagination and both list selectors.
+            refinements = urlencode(
+                [
+                    (name, value)
+                    for name, values in context["params"].lists()
+                    if name in (*REPOSITORY_FILTER_PARAM_NAMES, "sort")
+                    for value in values
+                ]
+            )
+            context["search_across_catalog_url"] = f"{reverse('repos:search')}?{refinements}"
         context["show_bookmark_discovery"] = (
             self.object.repo_full_name == "awesome-selfhosted/awesome-selfhosted"
             and not repository_filters_applied(self.request.GET, include_sort=True)

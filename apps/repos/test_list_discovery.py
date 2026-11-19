@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 
 from apps.repos.discovery import awesome_list_starting_points
-from apps.repos.models import AwesomeList
+from apps.repos.models import AwesomeList, AwesomeListItem, Repository
 
 
 @pytest.mark.django_db
@@ -113,3 +113,70 @@ def test_empty_directory_offers_repository_search_only_for_a_term(client, params
         assert client.get(target).status_code == 200
     else:
         assert b'data-discovery-action="directory_empty_repositories"' not in response.content
+
+
+@pytest.mark.django_db
+def test_empty_list_repository_search_can_expand_scope(client, user):
+    curated_list = AwesomeList.objects.create(
+        name="Django", slug="django", source_url="https://github.com/example/awesome-django"
+    )
+    other_list = AwesomeList.objects.create(
+        name="Python", slug="python", source_url="https://github.com/example/awesome-python"
+    )
+    repo = Repository.objects.create(
+        full_name="encode/httpx",
+        owner="encode",
+        name="httpx",
+        url="https://github.com/encode/httpx",
+        description="HTTP client for café & tea",
+        language="Python",
+        license_name="BSD-3-Clause",
+    )
+    AwesomeListItem.objects.create(awesome_list=other_list, repository=repo)
+    action = b'data-discovery-action="empty_search_across_catalog"'
+    query = {
+        "q": "café & tea",
+        "language": "Python",
+        "license": "bsd-3-clause",
+        "sort": "stars",
+        "sort_direction": "asc",
+    }
+
+    empty = client.get(
+        curated_list.get_absolute_url(),
+        {**query, "list": "django", "also_in": "django", "page": "2", "extra": "discard"},
+    )
+    assert empty.status_code == 200
+    assert empty.context["page_obj"].paginator.count == 0
+    target = empty.context["search_across_catalog_url"]
+    assert urlsplit(target).path == reverse("repos:search")
+    assert parse_qs(urlsplit(target).query) == {name: [value] for name, value in query.items()}
+    assert f'href="{escape(target)}"'.encode() in empty.content
+    assert empty.content.count(action) == 1
+    assert b'data-discovery-action="empty_remove_license"' in empty.content
+    assert b'data-discovery-action="empty_keep_search"' in empty.content
+
+    recovered = client.get(target)
+    assert recovered.status_code == 200
+    assert list(recovered.context["repositories"]) == [repo]
+    assert action not in recovered.content
+    assert action not in client.get(curated_list.get_absolute_url()).content
+    assert action not in client.get(other_list.get_absolute_url(), query).content
+    assert action not in client.get(reverse("repos:search"), {"q": "no-match"}).content
+
+    repeated = client.get(
+        curated_list.get_absolute_url(),
+        {
+            "has_file": ["AGENTS.md", ".github/copilot-instructions.md"],
+            "q": "httpx",
+            "mode": "keyword",
+        },
+    )
+    assert parse_qs(urlsplit(repeated.context["search_across_catalog_url"]).query) == {
+        "has_file": ["AGENTS.md", ".github/copilot-instructions.md"],
+        "q": ["httpx"],
+        "mode": ["keyword"],
+    }
+
+    client.force_login(user)
+    assert action not in client.get(reverse("repos:starred"), query).content
