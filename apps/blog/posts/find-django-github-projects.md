@@ -8,7 +8,7 @@ description: >-
   integration, development tooling, or an example before deciding what to study.
 meta_description: Find GitHub projects using Django, then verify manifest evidence with real linkding and factory_boy examples and a dependency-role worksheet.
 published_at: 2026-10-26T01:20:00+03:00
-updated_at: 2026-11-10T01:24:40+03:00
+updated_at: 2026-11-23T01:15:00+03:00
 author: Browse Awesome Team
 author_type: Organization
 image: /static/brand/awesome-repos-social.png
@@ -40,7 +40,7 @@ Use [Browse Awesome's detected-Django catalog](/repos/?framework=django) to find
 
 Browse Awesome's framework filter uses stored dependency-detection results. It is separate from the catalog's topic filter, and it searches the catalog rather than every file on GitHub. A repository can contain several projects, languages, and dependency files. Keep the original task visible while browsing: “a complete application to study” is narrower than “something related to Django.”
 
-Open one candidate's detail page and look for its stack evidence. The useful part is not just the Django label; it is the **file path and dependency name** behind it. Record those before moving upstream. If you are using the [read-only MCP discovery workflow](/blog/search-awesome-lists-with-mcp/), inspect the returned stack evidence and pagination rather than assuming the first results exhaust the catalog.
+Open the [factory_boy catalog entry](/repos/FactoryBoy/factory_boy/) and find **Django** under **Technology stack**. That label links to other matching repositories, not to a dependency file. To check why this repository matches, choose **View on GitHub** and open `setup.cfg` at the repository root. Search within the file for `Django` and read the section heading above the match. Step 3 links to the exact revision used here. If you are using the [read-only MCP discovery workflow](/blog/search-awesome-lists-with-mcp/), inspect the returned stack evidence and pagination rather than assuming the first results exhaust the catalog.
 
 **Done looks like:** a candidate repository, the reason you opened it, and an evidence path—not a conclusion about its architecture.
 
