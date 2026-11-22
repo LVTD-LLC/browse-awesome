@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-23
+
+- Correct the Django discovery guide’s path from a catalog stack label to the upstream dependency declaration.
+
 ## 2026-11-20
 
 - Offer a catalog-wide search when a curated list has no matching repositories,
