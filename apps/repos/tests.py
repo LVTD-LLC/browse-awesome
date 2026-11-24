@@ -5182,7 +5182,9 @@ def test_repository_history_chart_data_falls_back_to_first_commit_origin():
 
 
 @pytest.mark.django_db
-def test_awesome_list_history_chart_data_uses_list_snapshots_chronologically(django_assert_num_queries):
+def test_awesome_list_history_chart_data_uses_list_snapshots_chronologically(
+    django_assert_num_queries,
+):
     awesome_list = AwesomeList.objects.create(
         name="Awesome Django",
         slug="awesome-django",
