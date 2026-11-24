@@ -1754,6 +1754,7 @@ def awesome_list_history_chart_data(
 
     snapshots = list(
         awesome_list.snapshots.order_by("-captured_at", "-id").only(
+            "awesome_list_id",
             "captured_at",
             "stars",
             "commits_count",

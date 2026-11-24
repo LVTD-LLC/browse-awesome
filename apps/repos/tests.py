@@ -5182,7 +5182,9 @@ def test_repository_history_chart_data_falls_back_to_first_commit_origin():
 
 
 @pytest.mark.django_db
-def test_awesome_list_history_chart_data_uses_list_snapshots_chronologically():
+def test_awesome_list_history_chart_data_uses_list_snapshots_chronologically(
+    django_assert_num_queries,
+):
     awesome_list = AwesomeList.objects.create(
         name="Awesome Django",
         slug="awesome-django",
@@ -5198,7 +5200,8 @@ def test_awesome_list_history_chart_data_uses_list_snapshots_chronologically():
             commits_count=200 + index,
         )
 
-    chart_data = awesome_list_history_chart_data(awesome_list, limit=3)
+    with django_assert_num_queries(1):
+        chart_data = awesome_list_history_chart_data(awesome_list, limit=3)
 
     assert [point["stars"] for point in chart_data] == [102, 103, 104]
     assert [point["commit_count"] for point in chart_data] == [202, 203, 204]
