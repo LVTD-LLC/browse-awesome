@@ -5101,7 +5101,9 @@ def test_repository_performance_summary_reuses_recent_snapshots_for_short_histor
 
 
 @pytest.mark.django_db
-def test_repository_history_chart_data_limits_latest_snapshots_chronologically():
+def test_repository_history_chart_data_limits_latest_snapshots_chronologically(
+    django_assert_num_queries,
+):
     repo = Repository.objects.create(
         full_name="django/django",
         owner="django",
@@ -5117,7 +5119,8 @@ def test_repository_history_chart_data_limits_latest_snapshots_chronologically()
             commit_count=200 + index,
         )
 
-    chart_data = repository_history_chart_data(repo, limit=3)
+    with django_assert_num_queries(1):
+        chart_data = repository_history_chart_data(repo, limit=3)
 
     assert [point["stars"] for point in chart_data] == [102, 103, 104]
     assert [point["commit_count"] for point in chart_data] == [202, 203, 204]

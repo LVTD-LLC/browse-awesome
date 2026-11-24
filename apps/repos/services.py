@@ -1726,6 +1726,7 @@ def repository_history_chart_data(
 ) -> list[dict[str, bool | int | str | None]]:
     snapshots = list(
         repository.snapshots.order_by("-captured_at", "-id").only(
+            "repository_id",
             "captured_at",
             "stars",
             "commit_count",
