@@ -1,6 +1,7 @@
 from allauth.account.views import SignupByPasskeyView, SignupView
 from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -53,6 +54,22 @@ class LandingPageView(TemplateView):
             return redirect(f"{search_url}?{request.GET.urlencode()}")
         return super().dispatch(request, *args, **kwargs)
 
+    def most_committed_repositories(self, repositories):
+        key = f"landing:most-committed:v1:{self.sample_size}"
+        ranked_ids = cache.get(key)
+        if ranked_ids is None:
+            ranked = list(
+                repositories.filter(commits_growth_7d__gt=0).order_by(
+                    "-commits_growth_7d", "-commit_count", "full_name"
+                )[: self.sample_size]
+            )
+            cache.set(key, [repo.pk for repo in ranked], timeout=300)
+            return ranked
+
+        # Reapply catalog visibility and fetch current card data only for the winners.
+        visible = repositories.in_bulk(ranked_ids)
+        return [visible[pk] for pk in ranked_ids if pk in visible]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         repositories = annotate_repository_recent_growth_metrics(
@@ -73,13 +90,7 @@ class LandingPageView(TemplateView):
                         "full_name",
                     )[: self.sample_size]
                 ),
-                "most_committed_repositories": list(
-                    repositories.filter(commits_growth_7d__gt=0).order_by(
-                        "-commits_growth_7d",
-                        "-commit_count",
-                        "full_name",
-                    )[: self.sample_size]
-                ),
+                "most_committed_repositories": self.most_committed_repositories(repositories),
             }
         )
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-24
+
+- Reuse the homepage commit ranking for five minutes instead of sorting the catalog on every visit.
+
 ## 2026-11-23
 
 - Correct the Django discovery guide’s path from a catalog stack label to the upstream dependency declaration.
