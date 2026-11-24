@@ -80,7 +80,12 @@ def test_404_uses_awesome_list_copy(client, settings):
     assert "Try the catalog. It has better links." in content
 
 
-def test_landing_page_shows_repository_discovery_rows_and_side_ads(client):
+@pytest.fixture
+def fresh_commit_ranking():
+    cache.delete("landing:most-committed:v1:6")
+
+
+def test_landing_page_shows_repository_discovery_rows_and_side_ads(client, fresh_commit_ranking):
     recent_repo = Repository.objects.create(
         full_name="example/recent",
         owner="example",
@@ -145,7 +150,7 @@ def test_landing_page_shows_repository_discovery_rows_and_side_ads(client):
     assert recent_repo in response.context["recent_repositories"]
 
 
-def test_landing_page_shows_six_repositories_per_discovery_row(client):
+def test_landing_page_shows_six_repositories_per_discovery_row(client, fresh_commit_ranking):
     repositories = [
         Repository.objects.create(
             full_name=f"example/repository-{index}",
@@ -186,6 +191,16 @@ def test_landing_page_shows_six_repositories_per_discovery_row(client):
     }
     assert repositories[0] not in response.context["recent_repositories"]
     assert repositories[-1] in response.context["recent_repositories"]
+
+    expected = list(reversed(repositories[1:]))
+    assert response.context["most_committed_repositories"] == expected
+    Repository.objects.filter(pk=repositories[0].pk).update(commit_count=1000)
+    Repository.objects.filter(pk=expected[0].pk).update(is_awesome_list_candidate=True)
+    assert client.get(reverse("landing")).context["most_committed_repositories"] == expected[1:]
+    cache.delete("landing:most-committed:v1:6")
+    assert (
+        client.get(reverse("landing")).context["most_committed_repositories"][0] == repositories[0]
+    )
 
 
 def test_landing_page_preserves_legacy_root_search_queries(client):
