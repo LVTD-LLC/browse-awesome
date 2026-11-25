@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-26
+
+- Identify uhub’s renamed Awesome LLM collection while keeping its original list URL and ChatGPT search name.
+
 ## 2026-11-24
 
 - Reuse the homepage commit ranking for five minutes instead of sorting the catalog on every visit.
